@@ -27,6 +27,12 @@ export class MusicVisualizer {
 
   private setDataArray = (dataArray: Uint8Array) => (this.dataArray = dataArray);
 
+  private source!: AudioBufferSourceNode;
+
+  public getSource = () => this.source;
+
+  private setSource = (source: AudioBufferSourceNode) => (this.source = source);
+
   constructor() {
     const audioContext = new AudioContext();
     this.setAudioContext(audioContext);
@@ -69,11 +75,10 @@ export class MusicVisualizer {
 
     const source = this.getAudioContext().createBufferSource();
     source.buffer = audioBuffer;
-
     source.connect(this.getAnalyser());
-    this.getAnalyser().connect(this.getAudioContext().destination);
+    this.setSource(source);
 
-    // source.start();
+    this.getAnalyser().connect(this.getAudioContext().destination);
 
     this.draw();
   };

@@ -1,9 +1,9 @@
-import { MusicVisualizer } from "music-visualizer/main";
+import { Player } from "player/main";
 
 import "assets/style.css";
 
 const run = () => {
-  new MusicVisualizer();
+  new Player();
 };
 
 run();
