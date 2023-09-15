@@ -1,3 +1,9 @@
+import { MusicVisualizer } from "music-visualizer/main";
+
 import "assets/style.css";
 
-console.log("HERE");
+const run = () => {
+  new MusicVisualizer();
+};
+
+run();
