@@ -1,36 +1,26 @@
 import { MusicVisualizer } from "music-visualizer/main";
 import { playBtn } from "utils/elements";
 
+import mp3Src from "assets/mp3/burn-water-nostalgia-dreams.mp3";
+
 export class Player extends MusicVisualizer {
-  private isSourceInitialized = false;
-
-  public getIsSourceInitialized = () => this.isSourceInitialized;
-
-  private setIsSourceInitialized = (isSourceInitialized: boolean) => (this.isSourceInitialized = isSourceInitialized);
-
   constructor() {
     super();
     this.bindListeners();
   }
 
-  private play = async () => {
-    if (!this.getIsSourceInitialized()) {
-      this.getSource().start();
-      this.setIsSourceInitialized(true);
-    }
-    await this.getAudioContext().resume();
-  };
-
-  private pause = async () => {
-    await this.getAudioContext().suspend();
-  };
-
   private togglePlayback = async () => {
-    console.log(this.getAudioContext().state);
-    if (this.getAudioContext().state === "running") {
-      await this.pause();
-    } else if (this.getAudioContext().state === "suspended") {
-      await this.play();
+    const audioContext = this.getAudioContext();
+
+    if (!audioContext) {
+      await this.setupAudio(mp3Src);
+      return;
+    }
+
+    if (audioContext.state === "running") {
+      await audioContext.suspend();
+    } else if (audioContext.state === "suspended") {
+      await audioContext.resume();
     }
   };
 

@@ -1,19 +1,17 @@
 import { canvas, ctx } from "utils/elements";
 
-import mp3Src from "assets/mp3/burn-water-nostalgia-dreams.mp3";
-
 export class MusicVisualizer {
+  private audioContext: AudioContext | undefined;
+
+  public getAudioContext = () => this.audioContext;
+
+  private setAudioContext = (audioContext: AudioContext) => (this.audioContext = audioContext);
+
   private analyser!: AnalyserNode;
 
   public getAnalyser = () => this.analyser;
 
   private setAnalyser = (analyser: AnalyserNode) => (this.analyser = analyser);
-
-  private audioContext!: AudioContext;
-
-  public getAudioContext = () => this.audioContext;
-
-  private setAudioContext = (audioContext: AudioContext) => (this.audioContext = audioContext);
 
   private bufferLength!: number;
 
@@ -27,24 +25,7 @@ export class MusicVisualizer {
 
   private setDataArray = (dataArray: Uint8Array) => (this.dataArray = dataArray);
 
-  private source!: AudioBufferSourceNode;
-
-  public getSource = () => this.source;
-
-  private setSource = (source: AudioBufferSourceNode) => (this.source = source);
-
-  constructor() {
-    const audioContext = new AudioContext();
-    this.setAudioContext(audioContext);
-    const analyser = this.getAudioContext().createAnalyser();
-    analyser.fftSize = 256;
-    this.setAnalyser(analyser);
-    const bufferLength = analyser.frequencyBinCount;
-    this.setBufferLength(bufferLength);
-    const dataArray = new Uint8Array(bufferLength);
-    this.setDataArray(dataArray);
-    this.setupAudio(mp3Src);
-  }
+  constructor() {}
 
   private draw = () => {
     requestAnimationFrame(this.draw);
@@ -68,17 +49,31 @@ export class MusicVisualizer {
     }
   };
 
-  private setupAudio = async (src: string) => {
+  protected setupAudio = async (src: string) => {
+    const audioContext = new AudioContext();
+    this.setAudioContext(audioContext);
+
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256;
+    this.setAnalyser(analyser);
+
+    const bufferLength = analyser.frequencyBinCount;
+    this.setBufferLength(bufferLength);
+
+    const dataArray = new Uint8Array(bufferLength);
+    this.setDataArray(dataArray);
+
     const response = await fetch(src);
     const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = await this.getAudioContext().decodeAudioData(arrayBuffer);
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-    const source = this.getAudioContext().createBufferSource();
+    const source = audioContext.createBufferSource();
     source.buffer = audioBuffer;
     source.connect(this.getAnalyser());
-    this.setSource(source);
 
-    this.getAnalyser().connect(this.getAudioContext().destination);
+    this.getAnalyser().connect(audioContext.destination);
+
+    source.start();
 
     this.draw();
   };
