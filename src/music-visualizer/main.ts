@@ -39,19 +39,29 @@ export class MusicVisualizer {
   };
 
   private draw = () => {
-    // const barWidth: number = canvas.width / this.getBufferLength() / 2;
-    const numBars: number = Math.min(canvas.width / 2, this.getBufferLength());
-    const barWidth: number = canvas.width / numBars;
+    const barWidth: number = canvas.width / this.getBufferLength() / 2;
 
-    for (let i = 0; i < numBars; i++) {
-      const dataIndex: number = Math.floor(i * (this.getBufferLength() / numBars));
-      const barHeight: number = (this.getDataArray()[dataIndex] / 256) * canvas.height;
+    let pos: number = 0;
+    for (let i = 0; i < this.getBufferLength(); i++) {
+      const barHeight: number = this.getDataArray()[i];
 
       const red = (i * barHeight) / 10;
       const green = i * 4;
       const blue = barHeight / 4 - 12;
       ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-      ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth, barHeight);
+      ctx.fillRect(canvas.width / 2 - pos, canvas.height - barHeight, barWidth, barHeight);
+      pos += barWidth;
+    }
+
+    for (let i = 0; i < this.getBufferLength(); i++) {
+      const barHeight: number = this.getDataArray()[i];
+
+      const red = (i * barHeight) / 10;
+      const green = i * 4;
+      const blue = barHeight / 4 - 12;
+      ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+      ctx.fillRect(pos, canvas.height - barHeight, barWidth, barHeight);
+      pos += barWidth;
     }
   };
 
