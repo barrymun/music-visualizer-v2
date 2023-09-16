@@ -1,5 +1,11 @@
 import { canvas, ctx } from "utils/elements";
 
+// This function maps a linear index to a logarithmic scale
+function getLogIndex(i: number, numBars: number, bufferLength: number): number {
+  const frequencyRatio = i / numBars;
+  return Math.floor(Math.pow(frequencyRatio, 2) * bufferLength);
+}
+
 export class MusicVisualizer {
   private audioContext: AudioContext | undefined;
 
@@ -35,17 +41,18 @@ export class MusicVisualizer {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const barWidth = (canvas.width / this.getBufferLength()) * 2.5;
-    let barHeight;
-    let x = 0;
+    // const barWidth = (canvas.width / this.getBufferLength()) * 2.5;
 
-    for (let i = 0; i < this.getBufferLength(); i++) {
-      barHeight = this.getDataArray()[i];
+    // Limiting the number of bars to half the canvas width or buffer length, whichever is smaller
+    const numBars = Math.min(canvas.width / 2, this.getBufferLength());
+    const barWidth = canvas.width / numBars;
+
+    for (let i = 0; i < numBars; i++) {
+      const dataIndex = getLogIndex(i, numBars, this.getBufferLength());
+      const barHeight = this.getDataArray()[dataIndex];
 
       ctx.fillStyle = "white";
-      ctx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight / 2);
-
-      x += barWidth + 1;
+      ctx.fillRect(i * barWidth, canvas.height - barHeight / 2, barWidth, barHeight / 2);
     }
   };
 
