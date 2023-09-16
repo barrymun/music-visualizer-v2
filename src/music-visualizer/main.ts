@@ -1,11 +1,5 @@
 import { canvas, ctx } from "utils/elements";
 
-// This function maps a linear index to a logarithmic scale
-function getLogIndex(i: number, numBars: number, bufferLength: number): number {
-  const frequencyRatio = i / numBars;
-  return Math.floor(Math.pow(frequencyRatio, 2) * bufferLength);
-}
-
 export class MusicVisualizer {
   private audioContext: AudioContext | undefined;
 
@@ -33,35 +27,44 @@ export class MusicVisualizer {
 
   constructor() {}
 
-  private draw = () => {
-    requestAnimationFrame(this.draw);
-
+  private animate = () => {
     this.getAnalyser().getByteFrequencyData(this.getDataArray());
 
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // const barWidth = (canvas.width / this.getBufferLength()) * 2.5;
+    this.draw();
 
-    // Limiting the number of bars to half the canvas width or buffer length, whichever is smaller
-    const numBars = Math.min(canvas.width / 2, this.getBufferLength());
-    const barWidth = canvas.width / numBars;
+    requestAnimationFrame(this.animate);
+  };
+
+  private draw = () => {
+    // const barWidth: number = canvas.width / this.getBufferLength() / 2;
+    const numBars: number = Math.min(canvas.width / 2, this.getBufferLength());
+    const barWidth: number = canvas.width / numBars;
 
     for (let i = 0; i < numBars; i++) {
-      const dataIndex = getLogIndex(i, numBars, this.getBufferLength());
-      const barHeight = this.getDataArray()[dataIndex];
+      const dataIndex: number = Math.floor(i * (this.getBufferLength() / numBars));
+      const barHeight: number = (this.getDataArray()[dataIndex] / 256) * canvas.height;
 
-      ctx.fillStyle = "white";
-      ctx.fillRect(i * barWidth, canvas.height - barHeight / 2, barWidth, barHeight / 2);
+      const red = (i * barHeight) / 10;
+      const green = i * 4;
+      const blue = barHeight / 4 - 12;
+      ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+      ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth, barHeight);
     }
   };
 
   protected setupAudio = async (src: string) => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
     const audioContext = new AudioContext();
     this.setAudioContext(audioContext);
 
     const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 256;
+    // analyser.fftSize = 256;
+    analyser.fftSize = 128;
     this.setAnalyser(analyser);
 
     const bufferLength = analyser.frequencyBinCount;
@@ -82,6 +85,6 @@ export class MusicVisualizer {
 
     source.start();
 
-    this.draw();
+    this.animate();
   };
 }
