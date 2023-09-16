@@ -40,28 +40,21 @@ export class MusicVisualizer {
 
   private draw = () => {
     const barWidth: number = canvas.width / this.getBufferLength() / 2;
-
-    let pos: number = 0;
-    for (let i = 0; i < this.getBufferLength(); i++) {
-      const barHeight: number = this.getDataArray()[i];
-
-      const red = (i * barHeight) / 10;
-      const green = i * 4;
-      const blue = barHeight / 4 - 12;
-      ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-      ctx.fillRect(canvas.width / 2 - pos, canvas.height - barHeight, barWidth, barHeight);
-      pos += barWidth;
-    }
+    const pos: number = canvas.width / 2; // Start at the center
 
     for (let i = 0; i < this.getBufferLength(); i++) {
       const barHeight: number = this.getDataArray()[i];
-
       const red = (i * barHeight) / 10;
       const green = i * 4;
       const blue = barHeight / 4 - 12;
+
       ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-      ctx.fillRect(pos, canvas.height - barHeight, barWidth, barHeight);
-      pos += barWidth;
+
+      // Draw the left side
+      ctx.fillRect(pos - barWidth * (i + 1), canvas.height - barHeight, barWidth, barHeight);
+
+      // Draw the right side
+      ctx.fillRect(pos + barWidth * i, canvas.height - barHeight, barWidth, barHeight);
     }
   };
 
