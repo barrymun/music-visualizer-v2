@@ -38,23 +38,39 @@ export class MusicVisualizer {
     requestAnimationFrame(this.animate);
   };
 
+  private drawRoundedBar = (x: number, y: number, width: number, height: number) => {
+    const radius = width / 2; // Half of the width to get a semi-circle
+    ctx.beginPath();
+
+    // Draw the rectangle part of the bar
+    ctx.rect(x, y + radius, width, height - radius);
+
+    // Draw the rounded top part of the bar
+    ctx.arc(x + radius, y + radius, radius, 0, Math.PI, true);
+
+    ctx.closePath();
+    ctx.fill();
+  };
+
   private draw = () => {
     const barWidth: number = canvas.width / this.getBufferLength() / 2;
     const pos: number = canvas.width / 2; // Start at the center
 
     for (let i = 0; i < this.getBufferLength(); i++) {
       const barHeight: number = this.getDataArray()[i];
-      const red = (i * barHeight) / 10;
-      const green = i * 4;
-      const blue = barHeight / 4 - 12;
+
+      // Dynamic pink/purple color based on bar height
+      const red = 255;
+      const green = 20 + (barHeight / 256) * 50; // This will vary based on the bar height
+      const blue = 150 + (barHeight / 256) * 105;
 
       ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
 
       // Draw the left side
-      ctx.fillRect(pos - barWidth * (i + 1), canvas.height - barHeight, barWidth, barHeight);
+      this.drawRoundedBar(pos - barWidth * (i + 1), canvas.height - barHeight, barWidth, barHeight);
 
       // Draw the right side
-      ctx.fillRect(pos + barWidth * i, canvas.height - barHeight, barWidth, barHeight);
+      this.drawRoundedBar(pos + barWidth * i, canvas.height - barHeight, barWidth, barHeight);
     }
   };
 
