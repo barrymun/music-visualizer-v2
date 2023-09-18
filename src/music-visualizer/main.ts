@@ -1,6 +1,18 @@
-import { visualizerCanvas, visualizerCtx } from "utils/elements";
+import { delay } from "utils/helpers";
 
 export class MusicVisualizer {
+  private visualizerCanvas!: HTMLCanvasElement;
+
+  private getVisualizerCanvas = () => this.visualizerCanvas;
+
+  private setVisualizerCanvas = (visualizerCanvas: HTMLCanvasElement) => (this.visualizerCanvas = visualizerCanvas);
+
+  private visualizerCtx!: CanvasRenderingContext2D;
+
+  private getVisualizerCtx = () => this.visualizerCtx;
+
+  private setVisualizerCtx = (visualizerCtx: CanvasRenderingContext2D) => (this.visualizerCtx = visualizerCtx);
+
   private audioContext: AudioContext | undefined;
 
   public getAudioContext = () => this.audioContext;
@@ -27,18 +39,29 @@ export class MusicVisualizer {
 
   constructor() {
     this.bindListeners();
+    this.runSetup();
   }
 
+  private runSetup = async () => {
+    const el = document.getElementById("visualizer") as HTMLCanvasElement;
+    if (!el) {
+      await delay(0.1);
+      this.runSetup();
+    }
+    this.setVisualizerCanvas(el);
+    this.setVisualizerCtx(el.getContext("2d")!);
+  };
+
   private setCanvasSize = () => {
-    visualizerCanvas.width = window.innerWidth;
-    visualizerCanvas.height = window.innerHeight;
+    this.getVisualizerCanvas().width = window.innerWidth;
+    this.getVisualizerCanvas().height = window.innerHeight;
   };
 
   private animate = () => {
     this.getAnalyser().getByteFrequencyData(this.getDataArray());
 
-    visualizerCtx.fillStyle = "black";
-    visualizerCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+    this.getVisualizerCtx().fillStyle = "black";
+    this.getVisualizerCtx().clearRect(0, 0, this.getVisualizerCanvas().width, this.getVisualizerCanvas().height);
 
     this.draw();
 
@@ -47,21 +70,21 @@ export class MusicVisualizer {
 
   private drawRoundedBar = (x: number, y: number, width: number, height: number) => {
     const radius = width / 2; // Half of the width to get a semi-circle
-    visualizerCtx.beginPath();
+    this.getVisualizerCtx().beginPath();
 
     // Draw the rectangle part of the bar
-    visualizerCtx.rect(x, y + radius, width, height - radius);
+    this.getVisualizerCtx().rect(x, y + radius, width, height - radius);
 
     // Draw the rounded top part of the bar
-    visualizerCtx.arc(x + radius, y + radius, radius, 0, Math.PI, true);
+    this.getVisualizerCtx().arc(x + radius, y + radius, radius, 0, Math.PI, true);
 
-    visualizerCtx.closePath();
-    visualizerCtx.fill();
+    this.getVisualizerCtx().closePath();
+    this.getVisualizerCtx().fill();
   };
 
   private draw = () => {
-    const barWidth: number = visualizerCanvas.width / this.getBufferLength() / 2;
-    const pos: number = visualizerCanvas.width / 2; // Start at the center
+    const barWidth: number = this.getVisualizerCanvas().width / this.getBufferLength() / 2;
+    const pos: number = this.getVisualizerCanvas().width / 2; // Start at the center
 
     for (let i = 0; i < this.getBufferLength(); i++) {
       const barHeight: number = this.getDataArray()[i];
@@ -71,13 +94,13 @@ export class MusicVisualizer {
       const green = 20 + (barHeight / 256) * 50; // This will vary based on the bar height
       const blue = 150 + (barHeight / 256) * 105;
 
-      visualizerCtx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+      this.getVisualizerCtx().fillStyle = `rgb(${red}, ${green}, ${blue})`;
 
       // Draw the left side
-      this.drawRoundedBar(pos - barWidth * (i + 1), visualizerCanvas.height - barHeight, barWidth, barHeight);
+      this.drawRoundedBar(pos - barWidth * (i + 1), this.getVisualizerCanvas().height - barHeight, barWidth, barHeight);
 
       // Draw the right side
-      this.drawRoundedBar(pos + barWidth * i, visualizerCanvas.height - barHeight, barWidth, barHeight);
+      this.drawRoundedBar(pos + barWidth * i, this.getVisualizerCanvas().height - barHeight, barWidth, barHeight);
     }
   };
 
