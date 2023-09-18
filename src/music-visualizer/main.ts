@@ -1,4 +1,4 @@
-import { canvas, ctx } from "utils/elements";
+import { visualizerCanvas, visualizerCtx } from "utils/elements";
 
 export class MusicVisualizer {
   private audioContext: AudioContext | undefined;
@@ -30,15 +30,15 @@ export class MusicVisualizer {
   }
 
   private setCanvasSize = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    visualizerCanvas.width = window.innerWidth;
+    visualizerCanvas.height = window.innerHeight;
   };
 
   private animate = () => {
     this.getAnalyser().getByteFrequencyData(this.getDataArray());
 
-    ctx.fillStyle = "black";
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    visualizerCtx.fillStyle = "black";
+    visualizerCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
 
     this.draw();
 
@@ -47,21 +47,21 @@ export class MusicVisualizer {
 
   private drawRoundedBar = (x: number, y: number, width: number, height: number) => {
     const radius = width / 2; // Half of the width to get a semi-circle
-    ctx.beginPath();
+    visualizerCtx.beginPath();
 
     // Draw the rectangle part of the bar
-    ctx.rect(x, y + radius, width, height - radius);
+    visualizerCtx.rect(x, y + radius, width, height - radius);
 
     // Draw the rounded top part of the bar
-    ctx.arc(x + radius, y + radius, radius, 0, Math.PI, true);
+    visualizerCtx.arc(x + radius, y + radius, radius, 0, Math.PI, true);
 
-    ctx.closePath();
-    ctx.fill();
+    visualizerCtx.closePath();
+    visualizerCtx.fill();
   };
 
   private draw = () => {
-    const barWidth: number = canvas.width / this.getBufferLength() / 2;
-    const pos: number = canvas.width / 2; // Start at the center
+    const barWidth: number = visualizerCanvas.width / this.getBufferLength() / 2;
+    const pos: number = visualizerCanvas.width / 2; // Start at the center
 
     for (let i = 0; i < this.getBufferLength(); i++) {
       const barHeight: number = this.getDataArray()[i];
@@ -71,13 +71,13 @@ export class MusicVisualizer {
       const green = 20 + (barHeight / 256) * 50; // This will vary based on the bar height
       const blue = 150 + (barHeight / 256) * 105;
 
-      ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+      visualizerCtx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
 
       // Draw the left side
-      this.drawRoundedBar(pos - barWidth * (i + 1), canvas.height - barHeight, barWidth, barHeight);
+      this.drawRoundedBar(pos - barWidth * (i + 1), visualizerCanvas.height - barHeight, barWidth, barHeight);
 
       // Draw the right side
-      this.drawRoundedBar(pos + barWidth * i, canvas.height - barHeight, barWidth, barHeight);
+      this.drawRoundedBar(pos + barWidth * i, visualizerCanvas.height - barHeight, barWidth, barHeight);
     }
   };
 

@@ -1,2 +1,2 @@
-export const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement;
-export const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
+export const visualizerCanvas: HTMLCanvasElement = document.getElementById("visualizer") as HTMLCanvasElement;
+export const visualizerCtx: CanvasRenderingContext2D = visualizerCanvas.getContext("2d")!;
