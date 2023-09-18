@@ -3,8 +3,12 @@ import van from "vanjs-core";
 import { MusicVisualizer } from "music-visualizer/main";
 
 import mp3Src from "assets/mp3/burn-water-nostalgia-dreams.mp3";
+import playBtnSrc from "assets/img/play.svg";
+import pauseBtnSrc from "assets/img/pause.svg";
+import previousBtnSrc from "assets/img/previous.svg";
+import nextBtnSrc from "assets/img/next.svg";
 
-const { button, div } = van.tags;
+const { button, div, img } = van.tags;
 
 export const Player = () => {
   const musicVisualizer = new MusicVisualizer();
@@ -43,22 +47,32 @@ export const Player = () => {
       {
         id: "previous",
         onclick: handlePrevious,
+        class: "player-btn",
       },
-      "Previous",
+      img({
+        src: previousBtnSrc,
+      }),
     ),
     button(
       {
         id: "play",
         onclick: togglePlayback,
+        class: "player-btn",
       },
-      playbackStatus,
+      () =>
+        img({
+          src: playbackStatus.val === "Play" ? playBtnSrc : pauseBtnSrc,
+        }),
     ),
     button(
       {
         id: "next",
         onclick: handleNext,
+        class: "player-btn",
       },
-      "Next",
+      img({
+        src: nextBtnSrc,
+      }),
     ),
   );
 };
