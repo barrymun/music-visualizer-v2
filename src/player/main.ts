@@ -3,17 +3,23 @@ import { playBtn } from "utils/elements";
 
 import mp3Src from "assets/mp3/burn-water-nostalgia-dreams.mp3";
 
-export class Player extends MusicVisualizer {
+export class Player {
+  private musicVisualizer!: MusicVisualizer;
+
+  private getMusicVisualizer = () => this.musicVisualizer;
+
+  private setMusicVisualizer = (musicVisualizer: MusicVisualizer) => (this.musicVisualizer = musicVisualizer);
+
   constructor() {
-    super();
     this.bindListeners();
+    this.setMusicVisualizer(new MusicVisualizer());
   }
 
   private togglePlayback = async () => {
-    const audioContext = this.getAudioContext();
+    const audioContext = this.getMusicVisualizer().getAudioContext()!;
 
     if (!audioContext) {
-      await this.setupAudio(mp3Src);
+      await this.getMusicVisualizer().setupAudio(mp3Src);
       return;
     }
 
@@ -30,7 +36,7 @@ export class Player extends MusicVisualizer {
     window.addEventListener("unload", this.handleUnload);
   };
 
-  private handleUnload = (): void => {
+  private handleUnload = () => {
     playBtn.removeEventListener("click", this.togglePlayback);
 
     window.removeEventListener("unload", this.handleUnload);

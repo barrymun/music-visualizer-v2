@@ -25,7 +25,14 @@ export class MusicVisualizer {
 
   private setDataArray = (dataArray: Uint8Array) => (this.dataArray = dataArray);
 
-  constructor() {}
+  constructor() {
+    this.bindListeners();
+  }
+
+  private setCanvasSize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
 
   private animate = () => {
     this.getAnalyser().getByteFrequencyData(this.getDataArray());
@@ -74,9 +81,8 @@ export class MusicVisualizer {
     }
   };
 
-  protected setupAudio = async (src: string) => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  public setupAudio = async (src: string) => {
+    this.setCanvasSize();
 
     const audioContext = new AudioContext();
     this.setAudioContext(audioContext);
@@ -105,5 +111,19 @@ export class MusicVisualizer {
     source.start();
 
     this.animate();
+  };
+
+  private handleResize = () => {
+    this.setCanvasSize();
+  };
+
+  private bindListeners = () => {
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("unload", this.handleUnload);
+  };
+
+  private handleUnload = () => {
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("unload", this.handleUnload);
   };
 }
