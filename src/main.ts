@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 
-import { Player } from "player/main";
+import { Player } from "components/player";
 
 import "assets/style.css";
 

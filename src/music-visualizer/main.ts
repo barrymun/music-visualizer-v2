@@ -88,7 +88,6 @@ export class MusicVisualizer {
     this.setAudioContext(audioContext);
 
     const analyser = audioContext.createAnalyser();
-    // analyser.fftSize = 256;
     analyser.fftSize = 128;
     this.setAnalyser(analyser);
 
