@@ -1,9 +1,14 @@
 import van from "vanjs-core";
 
-const { canvas } = van.tags;
+const { canvas, div } = van.tags;
 
 export const Visualizer = () => {
-  return canvas({
-    id: "visualizer",
-  });
+  return div(
+    {
+      class: "visualizer-cntr",
+    },
+    canvas({
+      id: "visualizer",
+    }),
+  );
 };

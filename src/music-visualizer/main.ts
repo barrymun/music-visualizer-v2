@@ -44,6 +44,7 @@ export class MusicVisualizer {
 
   private runSetup = async () => {
     const el = document.getElementById("visualizer") as HTMLCanvasElement;
+    // keep trying until the element is found
     if (!el) {
       await delay(0.1);
       this.runSetup();
@@ -60,7 +61,6 @@ export class MusicVisualizer {
   private animate = () => {
     this.getAnalyser().getByteFrequencyData(this.getDataArray());
 
-    this.getVisualizerCtx().fillStyle = "black";
     this.getVisualizerCtx().clearRect(0, 0, this.getVisualizerCanvas().width, this.getVisualizerCanvas().height);
 
     this.draw();

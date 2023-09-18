@@ -11,6 +11,10 @@ export const Player = () => {
   const audioContextState = van.state<AudioContextState | undefined>(undefined);
   const playbackStatus = van.derive(() => (audioContextState.val === "running" ? "Pause" : "Play"));
 
+  const handlePrevious = async () => {};
+
+  const handleNext = async () => {};
+
   const togglePlayback = async () => {
     const audioContext = musicVisualizer.getAudioContext();
 
@@ -37,10 +41,24 @@ export const Player = () => {
     },
     button(
       {
+        id: "previous",
+        onclick: handlePrevious,
+      },
+      "Previous",
+    ),
+    button(
+      {
         id: "play",
         onclick: togglePlayback,
       },
       playbackStatus,
+    ),
+    button(
+      {
+        id: "next",
+        onclick: handleNext,
+      },
+      "Next",
     ),
   );
 };
