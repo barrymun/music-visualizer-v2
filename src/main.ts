@@ -1,9 +1,9 @@
+import van from "vanjs-core";
+
 import { Player } from "player/main";
 
 import "assets/style.css";
 
-const run = () => {
-  new Player();
-};
+const dom = document.body as HTMLBodyElement;
 
-run();
+van.add(dom, Player());

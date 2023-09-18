@@ -1,25 +1,19 @@
+import van from "vanjs-core";
+
 import { MusicVisualizer } from "music-visualizer/main";
-import { playBtn } from "utils/elements";
 
 import mp3Src from "assets/mp3/burn-water-nostalgia-dreams.mp3";
 
-export class Player {
-  private musicVisualizer!: MusicVisualizer;
+const { button, div } = van.tags;
 
-  private getMusicVisualizer = () => this.musicVisualizer;
+export const Player = () => {
+  const musicVisualizer = new MusicVisualizer();
 
-  private setMusicVisualizer = (musicVisualizer: MusicVisualizer) => (this.musicVisualizer = musicVisualizer);
-
-  constructor() {
-    this.bindListeners();
-    this.setMusicVisualizer(new MusicVisualizer());
-  }
-
-  private togglePlayback = async () => {
-    const audioContext = this.getMusicVisualizer().getAudioContext()!;
+  const togglePlayback = async () => {
+    const audioContext = musicVisualizer.getAudioContext()!;
 
     if (!audioContext) {
-      await this.getMusicVisualizer().setupAudio(mp3Src);
+      await musicVisualizer.setupAudio(mp3Src);
       return;
     }
 
@@ -30,15 +24,16 @@ export class Player {
     }
   };
 
-  private bindListeners = () => {
-    playBtn.addEventListener("click", this.togglePlayback);
-
-    window.addEventListener("unload", this.handleUnload);
-  };
-
-  private handleUnload = () => {
-    playBtn.removeEventListener("click", this.togglePlayback);
-
-    window.removeEventListener("unload", this.handleUnload);
-  };
-}
+  return div(
+    {
+      class: "player",
+    },
+    button(
+      {
+        id: "play",
+        onclick: togglePlayback,
+      },
+      "Play",
+    ),
+  );
+};

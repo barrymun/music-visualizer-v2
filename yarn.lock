@@ -1294,6 +1294,11 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
+vanjs-core@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/vanjs-core/-/vanjs-core-1.2.1.tgz#69770789a7d366a05f4b6b815e450543ca015eb3"
+  integrity sha512-YzCu96dEAqBhZtCnU2gXOh+DRriS1G/+GSTUOkg0EIM+5lluxF88Yx8KnbljWtxUyhjIJHGRnTNS0+QbVF7Fhg==
+
 vite-tsconfig-paths@^4.2.0:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/vite-tsconfig-paths/-/vite-tsconfig-paths-4.2.1.tgz#e53b89096b91d31a6d1e26f75999ea8c336a89ed"

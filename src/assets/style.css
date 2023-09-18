@@ -37,6 +37,8 @@ body {
   height: 100%;
 }
 
+/* .player {} */
+
 #play {
   position: absolute;
   z-index: 2;
