@@ -89,7 +89,7 @@ export class MusicVisualizer {
   };
 
   private draw = () => {
-    const barWidth: number = this.getVisualizerCanvas().width / this.getBufferLength() / 2;
+    const barWidth: number = Math.round(this.getVisualizerCanvas().width / this.getBufferLength() / 2);
     const pos: number = this.getVisualizerCanvas().width / 2; // Start at the center
 
     for (let i = 0; i < this.getBufferLength(); i++) {
