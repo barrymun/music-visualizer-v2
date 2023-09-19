@@ -44,7 +44,7 @@ button:hover {
 
 .visualizer-cntr {
   width: 100%;
-  height: calc(100% - 100px);
+  height: calc(100% - 160px);
 }
 
 #visualizer {
@@ -53,11 +53,13 @@ button:hover {
 }
 
 .controls {
-  height: 100px;
+  height: 160px;
   
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  gap: 16px;
 }
 
 .player {
@@ -79,7 +81,6 @@ button:hover {
 
 .seek-bar {
   width: 100%;
-  height: 100%;
 
   display: flex;
   justify-content: center;
