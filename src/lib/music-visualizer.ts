@@ -130,7 +130,6 @@ export class MusicVisualizer {
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     this.setDuration(audioBuffer.duration);
-    console.log(audioBuffer.duration);
 
     const source = audioContext.createBufferSource();
     source.buffer = audioBuffer;
@@ -142,6 +141,8 @@ export class MusicVisualizer {
 
     this.animate();
   };
+
+  public getElapsedTime = (): number => this.getAudioContext()?.currentTime ?? 0;
 
   private handleResize = () => {
     this.setCanvasSize();
