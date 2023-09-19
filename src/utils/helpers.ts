@@ -1,3 +1,5 @@
+import { FftSize } from "utils/types";
+
 /**
  * Delays the execution of subsequent code by a specified number of seconds.
  *
@@ -29,4 +31,19 @@ export const secondsToMinSec = (seconds: number): string => {
   // If seconds is a single digit, pad with a 0 (e.g., "2:05" instead of "2:5")
   const formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : String(remainingSeconds);
   return `${minutes}:${formattedSeconds}`;
+};
+
+export const getFftSize = (): FftSize => {
+  let fftSize: FftSize = 256;
+  if (window.innerWidth <= 400) {
+    fftSize = 32;
+  } else if (window.innerWidth > 400 && window.innerWidth <= 1000) {
+    fftSize = 64;
+  } else if (window.innerWidth > 1000 && window.innerWidth < 1600) {
+    fftSize = 128;
+  } else {
+    fftSize = 256;
+  }
+  console.log({ fftSize });
+  return fftSize;
 };

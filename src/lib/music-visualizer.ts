@@ -1,4 +1,4 @@
-import { delay } from "utils/helpers";
+import { delay, getFftSize } from "utils/helpers";
 
 export class MusicVisualizer {
   private visualizerCanvas!: HTMLCanvasElement;
@@ -59,11 +59,6 @@ export class MusicVisualizer {
     this.setVisualizerCtx(el.getContext("2d")!);
   };
 
-  private setCanvasSize = () => {
-    this.getVisualizerCanvas().width = window.innerWidth;
-    this.getVisualizerCanvas().height = window.innerHeight;
-  };
-
   private animate = () => {
     this.getAnalyser().getByteFrequencyData(this.getDataArray());
 
@@ -93,7 +88,7 @@ export class MusicVisualizer {
     const pos: number = this.getVisualizerCanvas().width / 2; // Start at the center
 
     for (let i = 0; i < this.getBufferLength(); i++) {
-      const barHeight: number = this.getDataArray()[i];
+      const barHeight: number = Math.round(this.getDataArray()[i]);
 
       // Dynamic pink/purple color based on bar height
       const red = 255;
@@ -103,11 +98,37 @@ export class MusicVisualizer {
       this.getVisualizerCtx().fillStyle = `rgb(${red}, ${green}, ${blue})`;
 
       // Draw the left side
-      this.drawRoundedBar(pos - barWidth * (i + 1), this.getVisualizerCanvas().height - barHeight, barWidth, barHeight);
+      this.drawRoundedBar(
+        Math.round(pos - barWidth * (i + 1)),
+        this.getVisualizerCanvas().height - barHeight,
+        barWidth,
+        barHeight,
+      );
 
       // Draw the right side
-      this.drawRoundedBar(pos + barWidth * i, this.getVisualizerCanvas().height - barHeight, barWidth, barHeight);
+      this.drawRoundedBar(
+        Math.round(pos + barWidth * i),
+        this.getVisualizerCanvas().height - barHeight,
+        barWidth,
+        barHeight,
+      );
     }
+  };
+
+  private setCanvasSize = () => {
+    this.getVisualizerCanvas().width = window.innerWidth;
+    this.getVisualizerCanvas().height = window.innerHeight;
+  };
+
+  private setAnalyserData = () => {
+    let analyser = this.getAnalyser();
+    if (!analyser) {
+      analyser = this.getAudioContext()!.createAnalyser();
+    }
+    analyser.fftSize = getFftSize();
+    this.setAnalyser(analyser);
+    this.setBufferLength(analyser.frequencyBinCount);
+    this.setDataArray(new Uint8Array(analyser.frequencyBinCount));
   };
 
   public setupAudio = async (src: string) => {
@@ -116,15 +137,7 @@ export class MusicVisualizer {
     const audioContext = new AudioContext();
     this.setAudioContext(audioContext);
 
-    const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 128;
-    this.setAnalyser(analyser);
-
-    const bufferLength = analyser.frequencyBinCount;
-    this.setBufferLength(bufferLength);
-
-    const dataArray = new Uint8Array(bufferLength);
-    this.setDataArray(dataArray);
+    this.setAnalyserData();
 
     const response = await fetch(src);
     const arrayBuffer = await response.arrayBuffer();
@@ -145,10 +158,13 @@ export class MusicVisualizer {
   public getElapsedTime = (): number => this.getAudioContext()?.currentTime ?? 0;
 
   private handleResize = () => {
+    console.log("resize");
     this.setCanvasSize();
+    this.setAnalyserData();
   };
 
   private bindListeners = () => {
+    console.log("bindListeners");
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("unload", this.handleUnload);
   };
