@@ -37,6 +37,12 @@ export class MusicVisualizer {
 
   private setDataArray = (dataArray: Uint8Array) => (this.dataArray = dataArray);
 
+  private duration: number = 0;
+
+  public getDuration = () => this.duration;
+
+  private setDuration = (duration: number) => (this.duration = duration);
+
   constructor() {
     this.bindListeners();
     this.runSetup();
@@ -123,6 +129,8 @@ export class MusicVisualizer {
     const response = await fetch(src);
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    this.setDuration(audioBuffer.duration);
+    console.log(audioBuffer.duration);
 
     const source = audioContext.createBufferSource();
     source.buffer = audioBuffer;

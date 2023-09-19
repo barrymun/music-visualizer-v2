@@ -25,6 +25,7 @@ export const Player = () => {
     if (!audioContext) {
       await musicVisualizer.setupAudio(mp3Src);
     } else {
+      console.log(audioContext.currentTime);
       switch (audioContext.state) {
         case "running":
           await audioContext.suspend();
