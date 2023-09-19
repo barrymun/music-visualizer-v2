@@ -158,13 +158,11 @@ export class MusicVisualizer {
   public getElapsedTime = (): number => this.getAudioContext()?.currentTime ?? 0;
 
   private handleResize = () => {
-    console.log("resize");
     this.setCanvasSize();
     this.setAnalyserData();
   };
 
   private bindListeners = () => {
-    console.log("bindListeners");
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("unload", this.handleUnload);
   };

@@ -15,8 +15,7 @@ export const delay = (s: number): Promise<void> => new Promise((resolve) => setT
  * @returns {string} The formatted time string in minute:second format.
  *
  * @example
- * const formattedTime = secondsToMinSec(229);
- * console.log(formattedTime);  // Output: "3:49"
+ * secondsToMinSec(229);  // Output: "3:49"
  */
 export const secondsToMinSec = (seconds: number): string => {
   let minutes = Math.floor(seconds / 60);
@@ -33,6 +32,11 @@ export const secondsToMinSec = (seconds: number): string => {
   return `${minutes}:${formattedSeconds}`;
 };
 
+/**
+ * Determines the appropriate FFT size based on the current window width.
+ *
+ * @returns {FftSize} The determined FFT size.
+ */
 export const getFftSize = (): FftSize => {
   let fftSize: FftSize = 256;
   if (window.innerWidth <= 400) {
@@ -44,6 +48,5 @@ export const getFftSize = (): FftSize => {
   } else {
     fftSize = 256;
   }
-  console.log({ fftSize });
   return fftSize;
 };
