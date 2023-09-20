@@ -12,14 +12,18 @@ const { button, div, img } = van.tags;
 
 export const Player = () => {
   const musicVisualizer = App.getMusicVisualizer();
-  const audioContextState = van.state<AudioContextState | undefined>(undefined);
-  const playbackStatus = van.derive(() => (audioContextState.val === "running" ? "Pause" : "Play"));
+  // const audioContextState = van.state<AudioContextState | undefined>(undefined);
+  // const playbackStatus = van.derive(() => (audioContextState.val === "running" ? "Pause" : "Play"));
+  const playbackStatus = van.state<"Play" | "Pause">("Play");
+
+  setInterval(() => {
+    const mv = App.getMusicVisualizer();
+    playbackStatus.val = mv.getAudioContext()?.state === "running" ? "Pause" : "Play";
+  }, 100);
 
   const handlePrevious = async () => {};
 
-  const handleNext = async () => {
-    musicVisualizer.playFromOffset(30);
-  };
+  const handleNext = async () => {};
 
   const togglePlayback = async () => {
     const audioContext = musicVisualizer.getAudioContext();
@@ -38,7 +42,6 @@ export const Player = () => {
           break;
       }
     }
-    audioContextState.val = musicVisualizer.getAudioContext()!.state;
   };
 
   return div(

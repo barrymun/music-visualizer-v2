@@ -4,6 +4,8 @@ import { isNaN, isFinite } from "lodash";
 import { App } from "lib/app";
 import { secondsToMinSec } from "utils/helpers";
 
+import mp3Src from "assets/mp3/burn-water-nostalgia-dreams.mp3";
+
 const { div, input } = van.tags;
 
 let isDragging: boolean = false;
@@ -32,10 +34,15 @@ export const SeekBar = () => {
     if (!isDragging) return;
   };
 
-  const handleMouseUp = (event: Event) => {
+  const handleMouseUp = async (event: Event) => {
+    const mv = App.getMusicVisualizer();
+    const audioContext = mv.getAudioContext();
+    if (!audioContext) {
+      await mv.setupAudio(mp3Src);
+    }
+
     const leftVal = (event.target as HTMLInputElement).valueAsNumber ?? 0;
 
-    const mv = App.getMusicVisualizer();
     const d = mv.getDuration();
     const pt = (leftVal / 100) * d;
     duration.val = secondsToMinSec(d);
