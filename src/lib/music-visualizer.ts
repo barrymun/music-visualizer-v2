@@ -37,11 +37,23 @@ export class MusicVisualizer {
 
   private setDataArray = (dataArray: Uint8Array) => (this.dataArray = dataArray);
 
+  private audioBuffer!: AudioBuffer;
+
+  public getAudioBuffer = () => this.audioBuffer;
+
+  private setAudioBuffer = (audioBuffer: AudioBuffer) => (this.audioBuffer = audioBuffer);
+
   private duration: number = 0;
 
   public getDuration = () => this.duration;
 
   private setDuration = (duration: number) => (this.duration = duration);
+
+  private sourceNode!: AudioBufferSourceNode;
+
+  public getSourceNode = () => this.sourceNode;
+
+  private setSourceNode = (sourceNode: AudioBufferSourceNode) => (this.sourceNode = sourceNode);
 
   constructor() {
     this.bindListeners();
@@ -142,17 +154,34 @@ export class MusicVisualizer {
     const response = await fetch(src);
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    this.setAudioBuffer(audioBuffer);
     this.setDuration(audioBuffer.duration);
 
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(this.getAnalyser());
-
+    const sourceNode = audioContext.createBufferSource();
+    sourceNode.buffer = audioBuffer;
+    sourceNode.connect(this.getAnalyser());
     this.getAnalyser().connect(audioContext.destination);
 
-    source.start();
+    sourceNode.start();
+    this.setSourceNode(sourceNode);
 
     this.animate();
+  };
+
+  public playFromOffset = async (offset: number) => {
+    let sourceNode = this.getSourceNode();
+    if (sourceNode) {
+      sourceNode.stop(); // Stop any previous playback
+    }
+
+    sourceNode = this.getAudioContext()!.createBufferSource();
+    sourceNode.buffer = this.getAudioBuffer();
+    sourceNode.connect(this.getAnalyser());
+    this.getAnalyser().connect(this.getAudioContext()!.destination);
+
+    // Start the audio from the specified offset
+    sourceNode.start(0, offset);
+    this.setSourceNode(sourceNode);
   };
 
   public getElapsedTime = (): number => this.getAudioContext()?.currentTime ?? 0;

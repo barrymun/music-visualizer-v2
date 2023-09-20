@@ -17,7 +17,9 @@ export const Player = () => {
 
   const handlePrevious = async () => {};
 
-  const handleNext = async () => {};
+  const handleNext = async () => {
+    musicVisualizer.playFromOffset(30);
+  };
 
   const togglePlayback = async () => {
     const audioContext = musicVisualizer.getAudioContext();
