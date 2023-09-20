@@ -12,10 +12,29 @@ let isDragging: boolean = false;
 export const SecondaryControls = () => {
   const mv = App.getMusicVisualizer();
 
-  const isMuted = van.state<"Play" | "Pause">("Play");
   const sliderValue = van.state<number>(mv.getDefaultGainValue()); // default gainNode.gain.value is 1
+  const isMuted = van.derive<boolean>(() => sliderValue.val === 0);
 
-  const toggleMute = (_event: Event) => {};
+  const toggleMute = (_event: Event) => {
+    if (sliderValue.val === 0) {
+      // check that the default gain value is not 0
+      let newValue = mv.getDefaultGainValue();
+      if (newValue === 0) newValue = 1;
+
+      sliderValue.val = newValue;
+      mv.getGainNode().gain.value = newValue;
+    } else {
+      // save the current volume setting
+      mv.setDefaultGainValue(sliderValue.val);
+
+      sliderValue.val = 0;
+      if (mv.getGainNode()) {
+        mv.getGainNode().gain.value = 0;
+      } else {
+        mv.setDefaultGainValue(0);
+      }
+    }
+  };
 
   const handleMouseDown = (_event: Event) => {
     isDragging = true;
@@ -50,7 +69,7 @@ export const SecondaryControls = () => {
       },
       () =>
         img({
-          src: isMuted.val === "Play" ? muteXButtonSrc : muteButtonSrc,
+          src: isMuted.val ? muteXButtonSrc : muteButtonSrc,
         }),
     ),
     input({
