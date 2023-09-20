@@ -13,7 +13,7 @@ export const SecondaryControls = () => {
   const mv = App.getMusicVisualizer();
 
   const isMuted = van.state<"Play" | "Pause">("Play");
-  const sliderValue = van.state<number>(1); // default gainNode.gain.value is 1
+  const sliderValue = van.state<number>(mv.getDefaultGainValue()); // default gainNode.gain.value is 1
 
   const toggleMute = (_event: Event) => {};
 
@@ -26,8 +26,13 @@ export const SecondaryControls = () => {
   };
 
   const handleMouseUp = (event: Event) => {
-    if (!mv.getAudioContext()) return;
     const inputValue = (event.target as HTMLInputElement).valueAsNumber ?? 0;
+
+    // always set the default so if the user alters volume before
+    // starting playback the selected volume will be used
+    mv.setDefaultGainValue(inputValue);
+
+    if (!mv.getAudioContext()) return;
     sliderValue.val = inputValue;
     mv.getGainNode().gain.value = inputValue;
     isDragging = false;

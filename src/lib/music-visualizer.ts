@@ -61,6 +61,12 @@ export class MusicVisualizer {
 
   private setGainNode = (gainNode: GainNode) => (this.gainNode = gainNode);
 
+  private defaultGainValue: number = 1;
+
+  public getDefaultGainValue = () => this.defaultGainValue;
+
+  public setDefaultGainValue = (defaultGainValue: number) => (this.defaultGainValue = defaultGainValue);
+
   private offset: number = 0;
 
   public getOffset = () => this.offset;
@@ -176,6 +182,7 @@ export class MusicVisualizer {
     this.setDuration(audioBuffer.duration);
 
     const gainNode = audioContext.createGain();
+    gainNode.gain.value = this.getDefaultGainValue();
     const sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = audioBuffer;
 
