@@ -95,25 +95,10 @@ button:hover {
   color: #fff;
 }
 
-.seek-bar-track {
+.seek-bar-input {
   width: 60%;
-  height: 4px;
-  background-color: #fff;
-  border-radius: 2px;
-  position: relative;
-  margin: 16px 0;
-
-  display: flex;
-  align-items: center;
 }
 
-.seek-bar-thumb {
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  background-color: #fff;
-  border-radius: 50%;
-}
-.seek-bar-thumb:hover {
-  cursor: pointer;
+input[type="range"] {
+  accent-color: #fff;
 }
