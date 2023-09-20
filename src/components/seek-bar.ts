@@ -12,7 +12,7 @@ export const SeekBar = () => {
 
   setInterval(() => {
     const musicVisualizer = App.getMusicVisualizer();
-    const a = musicVisualizer.getElapsedTime();
+    const a = musicVisualizer.getPlaybackTime();
     const b = musicVisualizer.getDuration();
     elapsedTime.val = secondsToMinSec(a);
     duration.val = secondsToMinSec(b);

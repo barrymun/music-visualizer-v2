@@ -55,6 +55,18 @@ export class MusicVisualizer {
 
   private setSourceNode = (sourceNode: AudioBufferSourceNode) => (this.sourceNode = sourceNode);
 
+  private offset: number = 0;
+
+  public getOffset = () => this.offset;
+
+  private setOffset = (offset: number) => (this.offset = offset);
+
+  private startTime: number = 0;
+
+  public getStartTime = () => this.startTime;
+
+  private setStartTime = (startTime: number) => (this.startTime = startTime);
+
   constructor() {
     this.bindListeners();
     this.runSetup();
@@ -168,11 +180,13 @@ export class MusicVisualizer {
     this.animate();
   };
 
-  public playFromOffset = async (offset: number) => {
+  public playFromOffset = async (seconds: number) => {
     let sourceNode = this.getSourceNode();
     if (sourceNode) {
       sourceNode.stop(); // Stop any previous playback
     }
+
+    this.setOffset(seconds); // Set the current offset to the passed value
 
     sourceNode = this.getAudioContext()!.createBufferSource();
     sourceNode.buffer = this.getAudioBuffer();
@@ -180,11 +194,19 @@ export class MusicVisualizer {
     this.getAnalyser().connect(this.getAudioContext()!.destination);
 
     // Start the audio from the specified offset
-    sourceNode.start(0, offset);
+    sourceNode.start(0, seconds);
     this.setSourceNode(sourceNode);
+
+    this.setStartTime(this.getAudioContext()!.currentTime);
   };
 
-  public getElapsedTime = (): number => this.getAudioContext()?.currentTime ?? 0;
+  public getPlaybackTime = (): number => {
+    const audioContext = this.getAudioContext();
+    if (audioContext) {
+      return audioContext.currentTime - this.getStartTime() + this.getOffset();
+    }
+    return 0;
+  };
 
   private handleResize = () => {
     this.setCanvasSize();
