@@ -11,13 +11,14 @@ const { div, input } = van.tags;
 let isDragging: boolean = false;
 
 export const SeekBar = () => {
+  const mv = App.getMusicVisualizer();
+
   const elapsedTime = van.state<string>("0:00");
   const duration = van.state<string>("0:00");
   const left = van.state<number>(0);
 
   setInterval(() => {
     if (isDragging) return;
-    const mv = App.getMusicVisualizer();
     const d = mv.getDuration();
     const pt = mv.getPlaybackTime();
     duration.val = secondsToMinSec(d);
@@ -35,7 +36,6 @@ export const SeekBar = () => {
   };
 
   const handleMouseUp = async (event: Event) => {
-    const mv = App.getMusicVisualizer();
     const audioContext = mv.getAudioContext();
     if (!audioContext) {
       await mv.setupAudio(mp3Src);
