@@ -156,17 +156,6 @@ export class MusicVisualizer {
     this.getVisualizerCanvas().height = window.innerHeight;
   };
 
-  private setAnalyserData = () => {
-    let analyser = this.getAnalyser();
-    if (!analyser) {
-      analyser = this.getAudioContext()!.createAnalyser();
-    }
-    analyser.fftSize = getFftSize();
-    this.setAnalyser(analyser);
-    this.setBufferLength(analyser.frequencyBinCount);
-    this.setDataArray(new Uint8Array(analyser.frequencyBinCount));
-  };
-
   public setupAudio = async (src: string) => {
     this.setCanvasSize();
 
@@ -196,6 +185,22 @@ export class MusicVisualizer {
     this.setGainNode(gainNode);
 
     this.animate();
+  };
+
+  private setAnalyserData = () => {
+    const audioContext = this.getAudioContext();
+    if (!audioContext) {
+      return;
+    }
+
+    let analyser = this.getAnalyser();
+    if (!analyser) {
+      analyser = audioContext.createAnalyser();
+    }
+    analyser.fftSize = getFftSize();
+    this.setAnalyser(analyser);
+    this.setBufferLength(analyser.frequencyBinCount);
+    this.setDataArray(new Uint8Array(analyser.frequencyBinCount));
   };
 
   public playFromOffset = async (seconds: number) => {
