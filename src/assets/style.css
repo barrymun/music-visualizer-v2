@@ -117,6 +117,12 @@ input[type="range"]::-moz-range-thumb:hover {
   flex-direction: column;
   gap: 16px;
 }
+@media (max-width: 768px) {
+  .secondary-controls {
+    bottom: 50%;
+    right: -90px;
+  }
+}
 
 input[type="range"].secondary-controls-input {
   transform: rotate(270deg) translate(-100%);
