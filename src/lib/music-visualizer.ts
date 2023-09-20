@@ -55,6 +55,12 @@ export class MusicVisualizer {
 
   private setSourceNode = (sourceNode: AudioBufferSourceNode) => (this.sourceNode = sourceNode);
 
+  private gainNode!: GainNode;
+
+  public getGainNode = () => this.gainNode;
+
+  private setGainNode = (gainNode: GainNode) => (this.gainNode = gainNode);
+
   private offset: number = 0;
 
   public getOffset = () => this.offset;
@@ -169,13 +175,17 @@ export class MusicVisualizer {
     this.setAudioBuffer(audioBuffer);
     this.setDuration(audioBuffer.duration);
 
+    const gainNode = audioContext.createGain();
     const sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = audioBuffer;
-    sourceNode.connect(this.getAnalyser());
-    this.getAnalyser().connect(audioContext.destination);
+
+    sourceNode.connect(this.getAnalyser()); // Connect source to analyser
+    this.getAnalyser().connect(gainNode); // Connect analyser to gain node
+    gainNode.connect(audioContext.destination); // Connect gain node to destination
 
     sourceNode.start();
     this.setSourceNode(sourceNode);
+    this.setGainNode(gainNode);
 
     this.animate();
   };
@@ -191,7 +201,8 @@ export class MusicVisualizer {
     sourceNode = this.getAudioContext()!.createBufferSource();
     sourceNode.buffer = this.getAudioBuffer();
     sourceNode.connect(this.getAnalyser());
-    this.getAnalyser().connect(this.getAudioContext()!.destination);
+    this.getAnalyser().connect(this.getGainNode());
+    this.getGainNode().connect(this.getAudioContext()!.destination);
 
     // Start the audio from the specified offset
     sourceNode.start(0, seconds);

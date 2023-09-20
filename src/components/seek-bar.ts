@@ -15,7 +15,7 @@ export const SeekBar = () => {
 
   const elapsedTime = van.state<string>("0:00");
   const duration = van.state<string>("0:00");
-  const left = van.state<number>(0);
+  const sliderValue = van.state<number>(0);
 
   setInterval(() => {
     if (isDragging) return;
@@ -24,7 +24,7 @@ export const SeekBar = () => {
     duration.val = secondsToMinSec(d);
     elapsedTime.val = secondsToMinSec(pt);
     const leftVal = (pt / d) * 100;
-    left.val = isNaN(leftVal) || !isFinite(leftVal) ? 0 : leftVal;
+    sliderValue.val = isNaN(leftVal) || !isFinite(leftVal) ? 0 : leftVal;
   }, 100);
 
   const handleMouseDown = (_event: Event) => {
@@ -41,13 +41,13 @@ export const SeekBar = () => {
       await mv.setupAudio(mp3Src);
     }
 
-    const leftVal = (event.target as HTMLInputElement).valueAsNumber ?? 0;
+    const inputValue = (event.target as HTMLInputElement).valueAsNumber ?? 0;
 
     const d = mv.getDuration();
-    const pt = (leftVal / 100) * d;
+    const pt = (inputValue / 100) * d;
     duration.val = secondsToMinSec(d);
     elapsedTime.val = secondsToMinSec(pt);
-    left.val = leftVal;
+    sliderValue.val = inputValue;
     mv.playFromOffset(pt);
     isDragging = false;
   };
@@ -67,8 +67,8 @@ export const SeekBar = () => {
       min: "0",
       max: "100",
       step: "0.01",
-      value: () => left.val,
       class: "seek-bar-input",
+      value: () => sliderValue.val,
       onmousedown: handleMouseDown,
       onmousemove: handleMouseMove,
       onmouseup: handleMouseUp,
