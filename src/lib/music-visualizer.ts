@@ -184,6 +184,7 @@ export class MusicVisualizer {
     gainNode.connect(audioContext.destination); // Connect gain node to destination
 
     sourceNode.start();
+
     this.setSourceNode(sourceNode);
     this.setGainNode(gainNode);
 
@@ -191,6 +192,11 @@ export class MusicVisualizer {
   };
 
   public playFromOffset = async (seconds: number) => {
+    const audioContext = this.getAudioContext();
+    if (!audioContext) {
+      return;
+    }
+
     let sourceNode = this.getSourceNode();
     if (sourceNode) {
       sourceNode.stop(); // Stop any previous playback
@@ -198,17 +204,17 @@ export class MusicVisualizer {
 
     this.setOffset(seconds); // Set the current offset to the passed value
 
-    sourceNode = this.getAudioContext()!.createBufferSource();
+    sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = this.getAudioBuffer();
     sourceNode.connect(this.getAnalyser());
     this.getAnalyser().connect(this.getGainNode());
-    this.getGainNode().connect(this.getAudioContext()!.destination);
+    this.getGainNode().connect(audioContext.destination);
 
     // Start the audio from the specified offset
     sourceNode.start(0, seconds);
     this.setSourceNode(sourceNode);
 
-    this.setStartTime(this.getAudioContext()!.currentTime);
+    this.setStartTime(audioContext.currentTime);
   };
 
   public getPlaybackTime = (): number => {

@@ -58,6 +58,7 @@ export const SecondaryControls = () => {
       onmousedown: handleMouseDown,
       onmousemove: handleMouseMove,
       onmouseup: handleMouseUp,
+      onchange: handleMouseUp,
     }),
   );
 };
