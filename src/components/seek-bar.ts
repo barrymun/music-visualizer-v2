@@ -70,8 +70,11 @@ export const SeekBar = () => {
       class: "seek-bar-input",
       value: () => sliderValue.val,
       onmousedown: handleMouseDown,
+      ontouchstart: handleMouseDown,
       onmousemove: handleMouseMove,
+      ontouchmove: handleMouseMove,
       onmouseup: handleMouseUp,
+      ontouchend: handleMouseUp,
     }),
     div(
       {

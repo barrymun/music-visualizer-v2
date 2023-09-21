@@ -46,6 +46,7 @@ export const SecondaryControls = () => {
 
   const handleMouseUp = (event: Event) => {
     const inputValue = (event.target as HTMLInputElement).valueAsNumber ?? 0;
+    console.log(inputValue);
 
     // always set the default so if the user alters volume before
     // starting playback the selected volume will be used
@@ -80,8 +81,11 @@ export const SecondaryControls = () => {
       class: "secondary-controls-input",
       value: () => sliderValue.val,
       onmousedown: handleMouseDown,
+      ontouchstart: handleMouseDown,
       onmousemove: handleMouseMove,
+      ontouchmove: handleMouseMove,
       onmouseup: handleMouseUp,
+      ontouchend: handleMouseUp,
       onchange: handleMouseUp,
     }),
   );
