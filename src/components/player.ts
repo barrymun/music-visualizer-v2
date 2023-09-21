@@ -49,6 +49,7 @@ export const Player = () => {
     },
     button(
       {
+        disabled: true,
         id: "previous",
         onclick: handlePrevious,
         class: "player-btn",
@@ -70,6 +71,7 @@ export const Player = () => {
     ),
     button(
       {
+        disabled: true,
         id: "next",
         onclick: handleNext,
         class: "player-btn",

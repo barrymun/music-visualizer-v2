@@ -39,6 +39,8 @@ export const SeekBar = () => {
     const audioContext = mv.getAudioContext();
     if (!audioContext) {
       await mv.setupAudio(mp3Src);
+      // don't start the player if the user slides the seek bar before pressing play
+      await mv.getAudioContext()?.suspend();
     }
 
     const inputValue = (event.target as HTMLInputElement).valueAsNumber ?? 0;
