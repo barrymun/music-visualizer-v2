@@ -22,14 +22,14 @@ export const SecondaryControls = () => {
       if (newValue === 0) newValue = 1;
 
       sliderValue.val = newValue;
-      mv.getGainNode().gain.value = newValue;
+      mv.getGainNode()!.gain.value = newValue;
     } else {
       // save the current volume setting
       mv.setDefaultGainValue(sliderValue.val);
 
       sliderValue.val = 0;
       if (mv.getGainNode()) {
-        mv.getGainNode().gain.value = 0;
+        mv.getGainNode()!.gain.value = 0;
       } else {
         mv.setDefaultGainValue(0);
       }
@@ -46,7 +46,6 @@ export const SecondaryControls = () => {
 
   const handleMouseUp = (event: Event) => {
     const inputValue = (event.target as HTMLInputElement).valueAsNumber ?? 0;
-    console.log(inputValue);
 
     // always set the default so if the user alters volume before
     // starting playback the selected volume will be used
@@ -54,7 +53,7 @@ export const SecondaryControls = () => {
 
     if (!mv.getAudioContext()) return;
     sliderValue.val = inputValue;
-    mv.getGainNode().gain.value = inputValue;
+    mv.getGainNode()!.gain.value = inputValue;
     isDragging = false;
   };
 

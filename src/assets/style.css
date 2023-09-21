@@ -144,3 +144,23 @@ input[type="range"].secondary-controls-input {
   width: 25px;
   height: 25px;
 }
+
+.song-select {
+  position: fixed;
+  top: 32px;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.song-select > select {
+  width: 30%;
+  font-size: 1.6rem;
+}
+@media (max-width: 768px) {
+  .song-select > select {
+    width: 60%;
+  }
+}

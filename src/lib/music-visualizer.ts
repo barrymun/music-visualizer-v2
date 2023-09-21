@@ -19,31 +19,31 @@ export class MusicVisualizer {
 
   public getAudioContext = () => this.audioContext;
 
-  private setAudioContext = (audioContext: AudioContext) => (this.audioContext = audioContext);
+  private setAudioContext = (audioContext: AudioContext | undefined) => (this.audioContext = audioContext);
 
-  private analyser!: AnalyserNode;
+  private analyser: AnalyserNode | undefined;
 
   public getAnalyser = () => this.analyser;
 
-  private setAnalyser = (analyser: AnalyserNode) => (this.analyser = analyser);
+  private setAnalyser = (analyser: AnalyserNode | undefined) => (this.analyser = analyser);
 
-  private bufferLength!: number;
+  private bufferLength: number | undefined;
 
   public getBufferLength = () => this.bufferLength;
 
-  private setBufferLength = (bufferLength: number) => (this.bufferLength = bufferLength);
+  private setBufferLength = (bufferLength: number | undefined) => (this.bufferLength = bufferLength);
 
-  private dataArray!: Uint8Array;
+  private dataArray: Uint8Array | undefined;
 
   public getDataArray = () => this.dataArray;
 
-  private setDataArray = (dataArray: Uint8Array) => (this.dataArray = dataArray);
+  private setDataArray = (dataArray: Uint8Array | undefined) => (this.dataArray = dataArray);
 
-  private audioBuffer!: AudioBuffer;
+  private audioBuffer: AudioBuffer | undefined;
 
   public getAudioBuffer = () => this.audioBuffer;
 
-  private setAudioBuffer = (audioBuffer: AudioBuffer) => (this.audioBuffer = audioBuffer);
+  private setAudioBuffer = (audioBuffer: AudioBuffer | undefined) => (this.audioBuffer = audioBuffer);
 
   private duration: number = 0;
 
@@ -51,17 +51,17 @@ export class MusicVisualizer {
 
   private setDuration = (duration: number) => (this.duration = duration);
 
-  private sourceNode!: AudioBufferSourceNode;
+  private sourceNode: AudioBufferSourceNode | undefined;
 
   public getSourceNode = () => this.sourceNode;
 
-  private setSourceNode = (sourceNode: AudioBufferSourceNode) => (this.sourceNode = sourceNode);
+  private setSourceNode = (sourceNode: AudioBufferSourceNode | undefined) => (this.sourceNode = sourceNode);
 
-  private gainNode!: GainNode;
+  private gainNode: GainNode | undefined;
 
   public getGainNode = () => this.gainNode;
 
-  private setGainNode = (gainNode: GainNode) => (this.gainNode = gainNode);
+  private setGainNode = (gainNode: GainNode | undefined) => (this.gainNode = gainNode);
 
   private defaultGainValue: number = 1;
 
@@ -104,7 +104,7 @@ export class MusicVisualizer {
   };
 
   private animate = () => {
-    this.getAnalyser().getByteFrequencyData(this.getDataArray());
+    this.getAnalyser()!.getByteFrequencyData(this.getDataArray()!);
 
     this.getVisualizerCtx().clearRect(0, 0, this.getVisualizerCanvas().width, this.getVisualizerCanvas().height);
 
@@ -128,11 +128,11 @@ export class MusicVisualizer {
   };
 
   private draw = () => {
-    const barWidth: number = Math.round(this.getVisualizerCanvas().width / this.getBufferLength() / 2);
+    const barWidth: number = Math.round(this.getVisualizerCanvas().width / this.getBufferLength()! / 2);
     const pos: number = this.getVisualizerCanvas().width / 2; // Start at the center
 
-    for (let i = 0; i < this.getBufferLength(); i++) {
-      const barHeight: number = Math.round(this.getDataArray()[i]);
+    for (let i = 0; i < this.getBufferLength()!; i++) {
+      const barHeight: number = Math.round(this.getDataArray()![i]);
 
       // Dynamic pink/purple color based on bar height
       const red = 255;
@@ -185,8 +185,8 @@ export class MusicVisualizer {
     const sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = audioBuffer;
 
-    sourceNode.connect(this.getAnalyser()); // Connect source to analyser
-    this.getAnalyser().connect(gainNode); // Connect analyser to gain node
+    sourceNode.connect(this.getAnalyser()!); // Connect source to analyser
+    this.getAnalyser()!.connect(gainNode); // Connect analyser to gain node
     gainNode.connect(audioContext.destination); // Connect gain node to destination
 
     sourceNode.start();
@@ -227,16 +227,40 @@ export class MusicVisualizer {
     this.setOffset(seconds); // Set the current offset to the passed value
 
     sourceNode = audioContext.createBufferSource();
-    sourceNode.buffer = this.getAudioBuffer();
-    sourceNode.connect(this.getAnalyser());
-    this.getAnalyser().connect(this.getGainNode());
-    this.getGainNode().connect(audioContext.destination);
+    sourceNode.buffer = this.getAudioBuffer()!;
+    sourceNode.connect(this.getAnalyser()!);
+    this.getAnalyser()!.connect(this.getGainNode()!);
+    this.getGainNode()!.connect(audioContext.destination);
 
     // Start the audio from the specified offset
     sourceNode.start(0, seconds);
     this.setSourceNode(sourceNode);
 
     this.setStartTime(audioContext.currentTime);
+  };
+
+  public destroy = async () => {
+    const audioContext = this.getAudioContext();
+    if (!audioContext) {
+      return;
+    }
+
+    this.getSourceNode()!.disconnect();
+    this.getGainNode()!.disconnect();
+    this.getAnalyser()!.disconnect();
+    await audioContext.close();
+    this.setAudioContext(undefined);
+
+    this.setAnalyser(undefined);
+    this.setBufferLength(undefined);
+    this.setDataArray(undefined);
+    this.setAudioBuffer(undefined);
+    this.setDuration(0);
+    this.setSourceNode(undefined);
+    this.setGainNode(undefined);
+    this.setDefaultGainValue(1);
+    this.setOffset(0);
+    this.setStartTime(0);
   };
 
   public isEnded = (): boolean => {
