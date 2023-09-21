@@ -4,8 +4,6 @@ import { isNaN, isFinite } from "lodash";
 import { App } from "lib/app";
 import { secondsToMinSec } from "utils/helpers";
 
-import mp3Src from "assets/mp3/burn-water-nostalgia-dreams.mp3";
-
 const { div, input } = van.tags;
 
 let isDragging: boolean = false;
@@ -38,7 +36,7 @@ export const SeekBar = () => {
   const handleMouseUp = async (event: Event) => {
     const audioContext = mv.getAudioContext();
     if (!audioContext) {
-      await mv.setupAudio(mp3Src);
+      await mv.setupAudio();
       // don't start the player if the user slides the seek bar before pressing play
       await mv.getAudioContext()?.suspend();
     }

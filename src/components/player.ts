@@ -2,8 +2,6 @@ import van from "vanjs-core";
 
 import { App } from "lib/app";
 
-import mp3Src from "assets/mp3/burn-water-nostalgia-dreams.mp3";
-console.log(mp3Src);
 import playBtnSrc from "assets/img/play.svg";
 import pauseBtnSrc from "assets/img/pause.svg";
 import previousBtnSrc from "assets/img/previous.svg";
@@ -28,7 +26,7 @@ export const Player = () => {
     const audioContext = mv.getAudioContext();
 
     if (!audioContext) {
-      await mv.setupAudio(mp3Src);
+      await mv.setupAudio();
     } else {
       switch (audioContext.state) {
         case "running":

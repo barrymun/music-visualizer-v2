@@ -1,3 +1,4 @@
+import { tracks } from "utils/constants";
 import { delay, getFftSize } from "utils/helpers";
 
 export class MusicVisualizer {
@@ -156,7 +157,7 @@ export class MusicVisualizer {
     this.getVisualizerCanvas().height = window.innerHeight;
   };
 
-  public setupAudio = async (src: string) => {
+  public setupAudio = async (src?: string | undefined) => {
     this.setCanvasSize();
 
     const audioContext = new AudioContext();
@@ -164,7 +165,9 @@ export class MusicVisualizer {
 
     this.setAnalyserData();
 
-    const response = await fetch(src);
+    const trackSrc: string = src ?? tracks[0].src;
+
+    const response = await fetch(trackSrc);
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     this.setAudioBuffer(audioBuffer);
