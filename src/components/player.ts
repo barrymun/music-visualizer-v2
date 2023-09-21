@@ -15,6 +15,10 @@ export const Player = () => {
   const playbackStatus = van.state<"Play" | "Pause">("Play");
 
   setInterval(() => {
+    if (mv.isEnded()) {
+      playbackStatus.val = "Play";
+      return;
+    }
     playbackStatus.val = mv.getAudioContext()?.state === "running" ? "Pause" : "Play";
   }, 100);
 
@@ -27,17 +31,24 @@ export const Player = () => {
 
     if (!audioContext) {
       await mv.setupAudio();
-    } else {
-      switch (audioContext.state) {
-        case "running":
-          await audioContext.suspend();
-          break;
-        case "suspended":
-          await audioContext.resume();
-          break;
-        default:
-          break;
-      }
+      return;
+    }
+
+    if (mv.isEnded()) {
+      await mv.playFromOffset(0);
+      await audioContext.resume();
+      return;
+    }
+
+    switch (audioContext.state) {
+      case "running":
+        await audioContext.suspend();
+        break;
+      case "suspended":
+        await audioContext.resume();
+        break;
+      default:
+        break;
     }
   };
 

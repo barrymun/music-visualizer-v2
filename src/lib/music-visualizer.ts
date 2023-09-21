@@ -239,16 +239,23 @@ export class MusicVisualizer {
     this.setStartTime(audioContext.currentTime);
   };
 
+  public isEnded = (): boolean => {
+    const audioContext = this.getAudioContext();
+    if (!audioContext) {
+      return false;
+    }
+    return audioContext.currentTime - this.getStartTime() + this.getOffset() >= this.getDuration();
+  };
+
   public getPlaybackTime = (): number => {
     const audioContext = this.getAudioContext();
     if (!audioContext) {
       return 0;
     }
-    const pt = audioContext.currentTime - this.getStartTime() + this.getOffset();
-    if (pt >= this.getDuration()) {
+    if (this.isEnded()) {
       return this.getDuration();
     }
-    return pt;
+    return audioContext.currentTime - this.getStartTime() + this.getOffset();
   };
 
   private handleResize = () => {
