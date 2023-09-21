@@ -241,10 +241,14 @@ export class MusicVisualizer {
 
   public getPlaybackTime = (): number => {
     const audioContext = this.getAudioContext();
-    if (audioContext) {
-      return audioContext.currentTime - this.getStartTime() + this.getOffset();
+    if (!audioContext) {
+      return 0;
     }
-    return 0;
+    const pt = audioContext.currentTime - this.getStartTime() + this.getOffset();
+    if (pt >= this.getDuration()) {
+      return this.getDuration();
+    }
+    return pt;
   };
 
   private handleResize = () => {
