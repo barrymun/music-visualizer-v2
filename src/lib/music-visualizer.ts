@@ -2,6 +2,8 @@ import { tracks } from "utils/constants";
 import { delay, getFftSize } from "utils/helpers";
 import { Track } from "utils/types";
 
+let requestId: number;
+
 export class MusicVisualizer {
   private visualizerCanvas!: HTMLCanvasElement;
 
@@ -85,7 +87,7 @@ export class MusicVisualizer {
 
   public getCurrentTrack = () => this.currentTrack;
 
-  public setCurrentTrack = (currentTrack: Track) => (this.currentTrack = currentTrack);
+  public setCurrentTrack = (currentTrack: Track | undefined) => (this.currentTrack = currentTrack);
 
   constructor() {
     this.bindListeners();
@@ -104,13 +106,22 @@ export class MusicVisualizer {
   };
 
   private animate = () => {
+    if (!this.getAudioContext()) {
+      // cancel the animation frame if the audio context is not set
+      cancelAnimationFrame(requestId);
+
+      // clear the canvas
+      this.getVisualizerCtx().clearRect(0, 0, this.getVisualizerCanvas().width, this.getVisualizerCanvas().height);
+      return;
+    }
+
     this.getAnalyser()!.getByteFrequencyData(this.getDataArray()!);
 
     this.getVisualizerCtx().clearRect(0, 0, this.getVisualizerCanvas().width, this.getVisualizerCanvas().height);
 
     this.draw();
 
-    requestAnimationFrame(this.animate);
+    requestId = requestAnimationFrame(this.animate);
   };
 
   private drawRoundedBar = (x: number, y: number, width: number, height: number) => {

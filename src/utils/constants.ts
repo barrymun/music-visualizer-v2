@@ -18,3 +18,5 @@ export const tracks: Track[] = [
     src: src3,
   },
 ];
+
+export const noArtistName: string = "🎹";

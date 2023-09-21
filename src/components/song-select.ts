@@ -12,11 +12,15 @@ export const SongSelect = () => {
   const handleChange = async (event: Event) => {
     const selectedValue = (event.target as HTMLSelectElement).value ?? 0;
     if (!selectedValue) {
+      await mv.destroy();
+      mv.setCurrentTrack(undefined);
       return;
     }
 
     const trackIndex: number = parseInt(selectedValue);
     if (isNaN(trackIndex) || trackIndex < 0 || trackIndex > tracks.length) {
+      await mv.destroy();
+      mv.setCurrentTrack(undefined);
       return;
     }
 

@@ -1,15 +1,16 @@
 import van from "vanjs-core";
 
 import { App } from "lib/app";
+import { noArtistName } from "utils/constants";
 
 const { div } = van.tags;
 
 export const ArtistInfo = () => {
   const mv = App.getMusicVisualizer();
-  const artistName = van.state<string>("🎹");
+  const artistName = van.state<string>(noArtistName);
 
   setInterval(() => {
-    artistName.val = mv.getCurrentTrack()?.name ?? "🎹";
+    artistName.val = mv.getCurrentTrack()?.name ?? noArtistName;
   }, 100);
 
   return div(
