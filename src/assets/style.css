@@ -12,6 +12,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --controls-height: 180px;
 }
 
 a {
@@ -48,7 +50,7 @@ button:disabled {
 
 .visualizer-cntr {
   width: 100%;
-  height: calc(100% - 160px);
+  height: calc(100% - var(--controls-height));
 }
 
 #visualizer {
@@ -57,7 +59,7 @@ button:disabled {
 }
 
 .controls {
-  height: 160px;
+  height: var(--controls-height);
   
   display: flex;
   flex-direction: column;
