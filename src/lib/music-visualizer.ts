@@ -269,7 +269,8 @@ export class MusicVisualizer {
     this.setDuration(0);
     this.setSourceNode(undefined);
     this.setGainNode(undefined);
-    this.setDefaultGainValue(1);
+    // don't change the default gain value
+    this.setDefaultGainValue(this.getDefaultGainValue());
     this.setOffset(0);
     this.setStartTime(0);
   };

@@ -17,21 +17,22 @@ export const SecondaryControls = () => {
 
   const toggleMute = (_event: Event) => {
     if (sliderValue.val === 0) {
-      // check that the default gain value is not 0
+      // currently muted, want to unmute
       let newValue = mv.getDefaultGainValue();
+      // check that the default gain value is not 0
       if (newValue === 0) newValue = 1;
-
       sliderValue.val = newValue;
-      mv.getGainNode()!.gain.value = newValue;
+      if (mv.getGainNode()) {
+        mv.getGainNode()!.gain.value = newValue;
+      }
     } else {
+      // want to mute
       // save the current volume setting
       mv.setDefaultGainValue(sliderValue.val);
 
       sliderValue.val = 0;
       if (mv.getGainNode()) {
         mv.getGainNode()!.gain.value = 0;
-      } else {
-        mv.setDefaultGainValue(0);
       }
     }
   };
