@@ -3,11 +3,18 @@ import { isNaN } from "lodash";
 
 import { App } from "lib/app";
 import { tracks } from "utils/constants";
+import { Track } from "utils/types";
 
 const { div, option, select } = van.tags;
 
 export const SongSelect = () => {
   const mv = App.getMusicVisualizer();
+
+  const currentTrack = van.state<Track | undefined>(mv.getCurrentTrack());
+
+  setInterval(() => {
+    currentTrack.val = mv.getCurrentTrack();
+  }, 100);
 
   const handleChange = async (event: Event) => {
     const selectedValue = (event.target as HTMLSelectElement).value ?? 0;
@@ -45,6 +52,7 @@ export const SongSelect = () => {
         return option(
           {
             value: index.toString(),
+            selected: () => currentTrack.val?.name === track.name,
           },
           track.name,
         );
