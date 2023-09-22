@@ -172,5 +172,6 @@ input[type="range"].secondary-controls-input {
 @media (max-width: 768px) {
   .song-select > select {
     width: 60%;
+    font-size: 1.2rem;
   }
 }
