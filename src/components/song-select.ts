@@ -24,21 +24,7 @@ export const SongSelect = () => {
       return;
     }
 
-    await mv.destroy();
-    mv.setCurrentTrack(tracks[trackIndex]);
-
-    // saving the original gain value so that if the default becomes 0
-    // from muting, the previously set value is still known
-    const originalGainValue = mv.getDefaultGainValue();
-    if (document.querySelector(".secondary-controls-input")) {
-      mv.setDefaultGainValue((document.querySelector(".secondary-controls-input") as HTMLInputElement).valueAsNumber);
-    }
-
-    await mv.setupAudio(tracks[trackIndex]);
-    // reset this known value
-    // this means that the the user's previoously set volume can be restored
-    // in the case that the .secondary-controls-input value is 0
-    mv.setDefaultGainValue(originalGainValue);
+    await mv.changeTrack(trackIndex);
   };
 
   return div(

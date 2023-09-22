@@ -1,6 +1,7 @@
 import van from "vanjs-core";
 
 import { App } from "lib/app";
+import { tracks } from "utils/constants";
 
 import playBtnSrc from "assets/img/play.svg";
 import pauseBtnSrc from "assets/img/pause.svg";
@@ -22,9 +23,20 @@ export const Player = () => {
     playbackStatus.val = mv.getAudioContext()?.state === "running" ? "Pause" : "Play";
   }, 100);
 
-  const handlePrevious = async () => {};
+  const handlePrevious = async () => {
+    if (mv.getPlaybackTime() > 5) {
+      await mv.playFromOffset(0);
+      return;
+    }
 
-  const handleNext = async () => {};
+    const trackIndex = tracks.findIndex((track) => track.name === mv.getCurrentTrack()?.name);
+    mv.changeTrack(trackIndex > 0 ? trackIndex - 1 : tracks.length - 1);
+  };
+
+  const handleNext = async () => {
+    const trackIndex = tracks.findIndex((track) => track.name === mv.getCurrentTrack()?.name);
+    mv.changeTrack(trackIndex < tracks.length - 1 ? trackIndex + 1 : 0);
+  };
 
   const togglePlayback = async () => {
     const audioContext = mv.getAudioContext();
@@ -58,7 +70,6 @@ export const Player = () => {
     },
     button(
       {
-        disabled: true,
         id: "previous",
         onclick: handlePrevious,
         class: "player-btn",
@@ -80,7 +91,6 @@ export const Player = () => {
     ),
     button(
       {
-        disabled: true,
         id: "next",
         onclick: handleNext,
         class: "player-btn",

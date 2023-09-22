@@ -294,6 +294,24 @@ export class MusicVisualizer {
     return audioContext.currentTime - this.getStartTime() + this.getOffset();
   };
 
+  public changeTrack = async (trackIndex: number) => {
+    await this.destroy();
+    this.setCurrentTrack(tracks[trackIndex]);
+
+    // saving the original gain value so that if the default becomes 0
+    // from muting, the previously set value is still known
+    const originalGainValue = this.getDefaultGainValue();
+    if (document.querySelector(".secondary-controls-input")) {
+      this.setDefaultGainValue((document.querySelector(".secondary-controls-input") as HTMLInputElement).valueAsNumber);
+    }
+
+    await this.setupAudio(tracks[trackIndex]);
+    // reset this known value
+    // this means that the the user's previoously set volume can be restored
+    // in the case that the .secondary-controls-input value is 0
+    this.setDefaultGainValue(originalGainValue);
+  };
+
   private handleResize = () => {
     this.setCanvasSize();
     this.setAnalyserData();
