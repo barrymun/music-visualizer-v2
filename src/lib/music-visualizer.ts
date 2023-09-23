@@ -242,12 +242,14 @@ export class MusicVisualizer {
     sourceNode = this.getAudioContext()!.createBufferSource();
     sourceNode.buffer = this.getAudioBuffer()!;
     sourceNode.connect(this.getAnalyser()!);
-    console.log(this.getAnalyser(), this.getGainNode());
     this.getAnalyser()!.connect(this.getGainNode()!);
     this.getGainNode()!.connect(this.getAudioContext()!.destination);
 
     // Start the audio from the specified offset
     sourceNode.start(0, seconds);
+    if (this.getAudioContext()!.state === "suspended") {
+      await this.getAudioContext()!.resume();
+    }
     this.setSourceNode(sourceNode);
 
     this.setStartTime(this.getAudioContext()!.currentTime);
