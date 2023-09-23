@@ -201,6 +201,9 @@ export class MusicVisualizer {
     gainNode.connect(audioContext.destination); // Connect gain node to destination
 
     sourceNode.start();
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
 
     this.setSourceNode(sourceNode);
     this.setGainNode(gainNode);
