@@ -52,6 +52,10 @@ Visit `http://localhost:your-port-number` (the port will be displayed in the con
 
 Huge thanks to the creators of [VanJS](https://vanjs.org/).
 
+## 📢 Note for Mobile Users
+
+If you are experiencing issues with audio not playing on mobile devices, please ensure your device is not set to silent mode or do not disturb mode. Some devices prevent audio playback in web applications when in these modes. Adjust your device settings and try again.
+
 ## License
 
 This project is licensed under the MIT License. For detailed information, see the [LICENSE](./LICENSE) file in the root directory.
