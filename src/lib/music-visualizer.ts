@@ -178,7 +178,13 @@ export class MusicVisualizer {
   public setupAudio = async (track?: Track | undefined) => {
     this.setCanvasSize();
 
-    const audioContext = new AudioContext();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({
+      sampleRate: 44100,
+    });
+    if (!audioContext) {
+      return;
+    }
     this.setAudioContext(audioContext);
 
     this.setAnalyserData();
