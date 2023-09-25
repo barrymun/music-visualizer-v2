@@ -5,6 +5,8 @@ import { ChangeTrackCallback, Track } from "utils/types";
 let requestId: number;
 
 export class MusicVisualizer {
+  #window: Window;
+  #changeTrackCallback?: ChangeTrackCallback;
   #visualizerCanvas?: HTMLCanvasElement;
   #visualizerCtx?: CanvasRenderingContext2D;
   #audioContext?: AudioContext;
@@ -19,9 +21,15 @@ export class MusicVisualizer {
   #startTime = 0;
   #currentTrack?: Track;
   #defaultGainValue = 1;
-  #changeTrackCallback?: ChangeTrackCallback;
 
-  constructor(changeTrackCallback?: ChangeTrackCallback) {
+  constructor({
+    window, // dependency injection
+    changeTrackCallback,
+  }: {
+    window: Window;
+    changeTrackCallback?: ChangeTrackCallback;
+  }) {
+    this.#window = window;
     this.#changeTrackCallback = changeTrackCallback;
     this.bindListeners();
     this.runSetup();
@@ -204,15 +212,15 @@ export class MusicVisualizer {
   private setCanvasSize = () => {
     if (!this.visualizerCanvas) return;
 
-    this.visualizerCanvas.width = window.innerWidth;
-    this.visualizerCanvas.height = window.innerHeight;
+    this.visualizerCanvas.width = this.#window.innerWidth;
+    this.visualizerCanvas.height = this.#window.innerHeight;
   };
 
   public setupAudio = async (track?: Track | undefined) => {
     this.setCanvasSize();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({
+    const audioContext = new ((this.#window as any).AudioContext || (this.#window as any).webkitAudioContext)({
       sampleRate: 44100,
     });
     if (!audioContext) {
@@ -351,12 +359,12 @@ export class MusicVisualizer {
   };
 
   private bindListeners = () => {
-    window.addEventListener("resize", this.handleResize);
-    window.addEventListener("unload", this.handleUnload);
+    this.#window.addEventListener("resize", this.handleResize);
+    this.#window.addEventListener("unload", this.handleUnload);
   };
 
   private handleUnload = () => {
-    window.removeEventListener("resize", this.handleResize);
-    window.removeEventListener("unload", this.handleUnload);
+    this.#window.removeEventListener("resize", this.handleResize);
+    this.#window.removeEventListener("unload", this.handleUnload);
   };
 }
