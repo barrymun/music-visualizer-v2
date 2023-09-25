@@ -1,19 +1,19 @@
 import { MusicVisualizer } from "lib/music-visualizer";
 
 export class App {
-  private static musicVisualizer: MusicVisualizer | undefined;
+  static #musicVisualizer?: MusicVisualizer;
 
   public static getMusicVisualizer = (): MusicVisualizer => {
-    // ensure singleton
-    if (!this.musicVisualizer) {
-      this.musicVisualizer = new MusicVisualizer({
-        window,
+    if (!this.#musicVisualizer) {
+      // ensure singleton
+      this.#musicVisualizer = new MusicVisualizer({
+        windowObj: window,
         changeTrackCallback: () => {
           const input = document.querySelector(".secondary-controls-input") as HTMLInputElement | null;
           return input ? input.valueAsNumber : 1;
         },
       });
     }
-    return this.musicVisualizer;
+    return this.#musicVisualizer;
   };
 }

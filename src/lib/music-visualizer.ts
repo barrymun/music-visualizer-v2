@@ -1,12 +1,12 @@
 import { tracks } from "utils/constants";
-import { delay, getFftSize } from "utils/helpers";
+import { getFftSize } from "utils/helpers";
 import { ChangeTrackCallback, Track } from "utils/types";
 
 let requestId: number;
 
 export class MusicVisualizer {
   #window: Window;
-  #changeTrackCallback?: ChangeTrackCallback;
+  #changeTrackCallback: ChangeTrackCallback;
   #visualizerCanvas?: HTMLCanvasElement;
   #visualizerCtx?: CanvasRenderingContext2D;
   #audioContext?: AudioContext;
@@ -23,16 +23,15 @@ export class MusicVisualizer {
   #defaultGainValue = 1;
 
   constructor({
-    window, // dependency injection
+    windowObj, // dependency injection
     changeTrackCallback,
   }: {
-    window: Window;
-    changeTrackCallback?: ChangeTrackCallback;
+    windowObj: Window;
+    changeTrackCallback: ChangeTrackCallback;
   }) {
-    this.#window = window;
+    this.#window = windowObj;
     this.#changeTrackCallback = changeTrackCallback;
     this.bindListeners();
-    this.runSetup();
   }
 
   get visualizerCanvas() {
@@ -41,13 +40,14 @@ export class MusicVisualizer {
 
   set visualizerCanvas(canvas: HTMLCanvasElement | undefined) {
     this.#visualizerCanvas = canvas;
-    if (canvas) {
-      this.#visualizerCtx = canvas.getContext("2d")!;
-    }
   }
 
   get visualizerCtx() {
     return this.#visualizerCtx;
+  }
+
+  set visualizerCtx(ctx: CanvasRenderingContext2D | undefined) {
+    this.#visualizerCtx = ctx;
   }
 
   get audioContext() {
@@ -146,13 +146,6 @@ export class MusicVisualizer {
     this.#defaultGainValue = value;
   }
 
-  private async runSetup() {
-    while (!this.#visualizerCanvas) {
-      this.visualizerCanvas = document.getElementById("visualizer") as HTMLCanvasElement;
-      await delay(0.1);
-    }
-  }
-
   private animate = () => {
     if (!this.visualizerCtx || !this.visualizerCanvas) return;
 
@@ -209,7 +202,7 @@ export class MusicVisualizer {
     }
   };
 
-  private setCanvasSize = () => {
+  public setCanvasSize = () => {
     if (!this.visualizerCanvas) return;
 
     this.visualizerCanvas.width = this.#window.innerWidth;
@@ -345,9 +338,7 @@ export class MusicVisualizer {
     // saving the original gain value so that if the default becomes 0
     // from muting, the previously set value is still known
     let gv = this.#defaultGainValue;
-    if (this.#changeTrackCallback) {
-      gv = this.#changeTrackCallback();
-    }
+    gv = this.#changeTrackCallback();
 
     this.#defaultGainValue = gv;
     await this.setupAudio(tracks[trackIndex]);
