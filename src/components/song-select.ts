@@ -10,24 +10,24 @@ const { div, option, select } = van.tags;
 export const SongSelect = () => {
   const mv = App.getMusicVisualizer();
 
-  const currentTrack = van.state<Track | undefined>(mv.getCurrentTrack());
+  const currentTrack = van.state<Track | undefined>(mv.currentTrack);
 
   setInterval(() => {
-    currentTrack.val = mv.getCurrentTrack();
+    currentTrack.val = mv.currentTrack;
   }, 100);
 
   const handleChange = async (event: Event) => {
     const selectedValue = (event.target as HTMLSelectElement).value ?? 0;
     if (!selectedValue) {
       await mv.destroy();
-      mv.setCurrentTrack(undefined);
+      mv.currentTrack = undefined;
       return;
     }
 
     const trackIndex: number = parseInt(selectedValue);
     if (isNaN(trackIndex) || trackIndex < 0 || trackIndex > tracks.length) {
       await mv.destroy();
-      mv.setCurrentTrack(undefined);
+      mv.currentTrack = undefined;
       return;
     }
 

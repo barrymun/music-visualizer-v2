@@ -17,7 +17,7 @@ export const SeekBar = () => {
 
   setInterval(() => {
     if (isDragging) return;
-    const d = mv.getDuration();
+    const d = mv.duration;
     const pt = mv.getPlaybackTime();
     duration.val = secondsToMinSec(d);
     elapsedTime.val = secondsToMinSec(pt);
@@ -34,16 +34,15 @@ export const SeekBar = () => {
   };
 
   const handleMouseUp = async (event: Event) => {
-    const audioContext = mv.getAudioContext();
-    if (!audioContext) {
+    if (!mv.audioContext) {
       await mv.setupAudio();
       // don't start the player if the user slides the seek bar before pressing play
-      await mv.getAudioContext()?.suspend();
+      await mv.audioContext!.suspend();
     }
 
     const inputValue = (event.target as HTMLInputElement).valueAsNumber ?? 0;
 
-    const d = mv.getDuration();
+    const d = mv.duration;
     const pt = (inputValue / 100) * d;
     duration.val = secondsToMinSec(d);
     elapsedTime.val = secondsToMinSec(pt);

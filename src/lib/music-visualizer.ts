@@ -5,165 +5,194 @@ import { Track } from "utils/types";
 let requestId: number;
 
 export class MusicVisualizer {
-  private visualizerCanvas!: HTMLCanvasElement;
-
-  private getVisualizerCanvas = () => this.visualizerCanvas;
-
-  private setVisualizerCanvas = (visualizerCanvas: HTMLCanvasElement) => (this.visualizerCanvas = visualizerCanvas);
-
-  private visualizerCtx!: CanvasRenderingContext2D;
-
-  private getVisualizerCtx = () => this.visualizerCtx;
-
-  private setVisualizerCtx = (visualizerCtx: CanvasRenderingContext2D) => (this.visualizerCtx = visualizerCtx);
-
-  private audioContext: AudioContext | undefined;
-
-  public getAudioContext = () => this.audioContext;
-
-  private setAudioContext = (audioContext: AudioContext | undefined) => (this.audioContext = audioContext);
-
-  private analyser: AnalyserNode | undefined;
-
-  public getAnalyser = () => this.analyser;
-
-  private setAnalyser = (analyser: AnalyserNode | undefined) => (this.analyser = analyser);
-
-  private bufferLength: number | undefined;
-
-  public getBufferLength = () => this.bufferLength;
-
-  private setBufferLength = (bufferLength: number | undefined) => (this.bufferLength = bufferLength);
-
-  private dataArray: Uint8Array | undefined;
-
-  public getDataArray = () => this.dataArray;
-
-  private setDataArray = (dataArray: Uint8Array | undefined) => (this.dataArray = dataArray);
-
-  private audioBuffer: AudioBuffer | undefined;
-
-  public getAudioBuffer = () => this.audioBuffer;
-
-  private setAudioBuffer = (audioBuffer: AudioBuffer | undefined) => (this.audioBuffer = audioBuffer);
-
-  private duration: number = 0;
-
-  public getDuration = () => this.duration;
-
-  private setDuration = (duration: number) => (this.duration = duration);
-
-  private sourceNode: AudioBufferSourceNode | undefined;
-
-  public getSourceNode = () => this.sourceNode;
-
-  private setSourceNode = (sourceNode: AudioBufferSourceNode | undefined) => (this.sourceNode = sourceNode);
-
-  private gainNode: GainNode | undefined;
-
-  public getGainNode = () => this.gainNode;
-
-  private setGainNode = (gainNode: GainNode | undefined) => (this.gainNode = gainNode);
-
-  private defaultGainValue: number = 1;
-
-  public getDefaultGainValue = () => this.defaultGainValue;
-
-  public setDefaultGainValue = (defaultGainValue: number) => (this.defaultGainValue = defaultGainValue);
-
-  private offset: number = 0;
-
-  public getOffset = () => this.offset;
-
-  private setOffset = (offset: number) => (this.offset = offset);
-
-  private startTime: number = 0;
-
-  public getStartTime = () => this.startTime;
-
-  private setStartTime = (startTime: number) => (this.startTime = startTime);
-
-  private currentTrack: Track | undefined;
-
-  public getCurrentTrack = () => this.currentTrack;
-
-  public setCurrentTrack = (currentTrack: Track | undefined) => (this.currentTrack = currentTrack);
+  #visualizerCanvas?: HTMLCanvasElement;
+  #visualizerCtx?: CanvasRenderingContext2D;
+  #audioContext?: AudioContext;
+  #analyser?: AnalyserNode;
+  #bufferLength?: number;
+  #dataArray?: Uint8Array;
+  #audioBuffer?: AudioBuffer;
+  #sourceNode?: AudioBufferSourceNode;
+  #gainNode?: GainNode;
+  #duration = 0;
+  #offset = 0;
+  #startTime = 0;
+  #currentTrack?: Track;
+  #defaultGainValue = 1;
 
   constructor() {
     this.bindListeners();
     this.runSetup();
   }
 
-  private runSetup = async () => {
-    const el = document.getElementById("visualizer") as HTMLCanvasElement;
-    // keep trying until the element is found
-    if (!el) {
-      await delay(0.1);
-      this.runSetup();
+  get visualizerCanvas() {
+    return this.#visualizerCanvas;
+  }
+
+  set visualizerCanvas(canvas: HTMLCanvasElement | undefined) {
+    this.#visualizerCanvas = canvas;
+    if (canvas) {
+      this.#visualizerCtx = canvas.getContext("2d")!;
     }
-    this.setVisualizerCanvas(el);
-    this.setVisualizerCtx(el.getContext("2d")!);
-  };
+  }
+
+  get visualizerCtx() {
+    return this.#visualizerCtx;
+  }
+
+  get audioContext() {
+    return this.#audioContext;
+  }
+
+  set audioContext(context: AudioContext | undefined) {
+    this.#audioContext = context;
+  }
+
+  get analyser() {
+    return this.#analyser;
+  }
+
+  set analyser(analyser: AnalyserNode | undefined) {
+    this.#analyser = analyser;
+  }
+
+  get bufferLength() {
+    return this.#bufferLength;
+  }
+
+  set bufferLength(length: number | undefined) {
+    this.#bufferLength = length;
+  }
+
+  get dataArray() {
+    return this.#dataArray;
+  }
+
+  set dataArray(array: Uint8Array | undefined) {
+    this.#dataArray = array;
+  }
+
+  get audioBuffer() {
+    return this.#audioBuffer;
+  }
+
+  set audioBuffer(buffer: AudioBuffer | undefined) {
+    this.#audioBuffer = buffer;
+  }
+
+  get sourceNode() {
+    return this.#sourceNode;
+  }
+
+  set sourceNode(node: AudioBufferSourceNode | undefined) {
+    this.#sourceNode = node;
+  }
+
+  get gainNode() {
+    return this.#gainNode;
+  }
+
+  set gainNode(node: GainNode | undefined) {
+    this.#gainNode = node;
+  }
+
+  get duration() {
+    return this.#duration;
+  }
+
+  set duration(duration: number) {
+    this.#duration = duration;
+  }
+
+  get offset() {
+    return this.#offset;
+  }
+
+  set offset(offset: number) {
+    this.#offset = offset;
+  }
+
+  get startTime() {
+    return this.#startTime;
+  }
+
+  set startTime(time: number) {
+    this.#startTime = time;
+  }
+
+  get currentTrack() {
+    return this.#currentTrack;
+  }
+
+  set currentTrack(track: Track | undefined) {
+    this.#currentTrack = track;
+  }
+
+  get defaultGainValue() {
+    return this.#defaultGainValue;
+  }
+
+  set defaultGainValue(value: number) {
+    this.#defaultGainValue = value;
+  }
+
+  private async runSetup() {
+    while (!this.#visualizerCanvas) {
+      this.visualizerCanvas = document.getElementById("visualizer") as HTMLCanvasElement;
+      await delay(0.1);
+    }
+  }
 
   private animate = () => {
-    if (!this.getAudioContext()) {
-      // cancel the animation frame if the audio context is not set
-      cancelAnimationFrame(requestId);
+    if (!this.visualizerCtx || !this.visualizerCanvas) return;
 
-      // clear the canvas
-      this.getVisualizerCtx().clearRect(0, 0, this.getVisualizerCanvas().width, this.getVisualizerCanvas().height);
+    if (!this.audioContext) {
+      cancelAnimationFrame(requestId);
+      this.visualizerCtx.clearRect(0, 0, this.visualizerCanvas.width, this.visualizerCanvas.height);
       return;
     }
 
-    this.getAnalyser()!.getByteFrequencyData(this.getDataArray()!);
-
-    this.getVisualizerCtx().clearRect(0, 0, this.getVisualizerCanvas().width, this.getVisualizerCanvas().height);
-
+    this.analyser!.getByteFrequencyData(this.dataArray!);
+    this.visualizerCtx.clearRect(0, 0, this.visualizerCanvas.width, this.visualizerCanvas.height);
     this.draw();
-
     requestId = requestAnimationFrame(this.animate);
   };
 
   private drawRoundedBar = (x: number, y: number, width: number, height: number) => {
-    const radius = width / 2; // Half of the width to get a semi-circle
-    this.getVisualizerCtx().beginPath();
+    if (!this.visualizerCtx) return;
 
-    // Draw the rectangle part of the bar
-    this.getVisualizerCtx().rect(x, y + radius, width, height - radius);
-
-    // Draw the rounded top part of the bar
-    this.getVisualizerCtx().arc(x + radius, y + radius, radius, 0, Math.PI, true);
-
-    this.getVisualizerCtx().closePath();
-    this.getVisualizerCtx().fill();
+    const radius = width / 2;
+    this.visualizerCtx.beginPath();
+    this.visualizerCtx.rect(x, y + radius, width, height - radius);
+    this.visualizerCtx.arc(x + radius, y + radius, radius, 0, Math.PI, true);
+    this.visualizerCtx.closePath();
+    this.visualizerCtx.fill();
   };
 
   private draw = () => {
-    const barWidth: number = Math.round(this.getVisualizerCanvas().width / this.getBufferLength()! / 2);
-    const pos: number = this.getVisualizerCanvas().width / 2; // Start at the center
+    if (!this.visualizerCtx || !this.visualizerCanvas) return;
 
-    for (let i = 0; i < this.getBufferLength()!; i++) {
-      const barHeight: number = Math.round(this.getDataArray()![i]);
+    const barWidth: number = Math.round(this.visualizerCanvas.width / this.bufferLength! / 2);
+    const pos: number = this.visualizerCanvas.width / 2;
 
-      // Dynamic pink/purple color based on bar height
+    for (let i = 0; i < this.bufferLength!; i++) {
+      const barHeight: number = Math.round(this.dataArray![i]);
       const red = 255;
-      const green = 20 + (barHeight / 256) * 50; // This will vary based on the bar height
+      const green = 20 + (barHeight / 256) * 50;
       const blue = 150 + (barHeight / 256) * 105;
 
-      this.getVisualizerCtx().fillStyle = `rgb(${red}, ${green}, ${blue})`;
+      this.visualizerCtx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
 
-      // Draw the left side
       this.drawRoundedBar(
         Math.round(pos - barWidth * (i + 1)),
-        this.getVisualizerCanvas().height - barHeight,
+        this.visualizerCanvas.height - barHeight,
         barWidth,
         barHeight,
       );
 
-      // Draw the right side
       this.drawRoundedBar(
         Math.round(pos + barWidth * i),
-        this.getVisualizerCanvas().height - barHeight,
+        this.visualizerCanvas.height - barHeight,
         barWidth,
         barHeight,
       );
@@ -171,8 +200,10 @@ export class MusicVisualizer {
   };
 
   private setCanvasSize = () => {
-    this.getVisualizerCanvas().width = window.innerWidth;
-    this.getVisualizerCanvas().height = window.innerHeight;
+    if (!this.visualizerCanvas) return;
+
+    this.visualizerCanvas.width = window.innerWidth;
+    this.visualizerCanvas.height = window.innerHeight;
   };
 
   public setupAudio = async (track?: Track | undefined) => {
@@ -185,25 +216,25 @@ export class MusicVisualizer {
     if (!audioContext) {
       return;
     }
-    this.setAudioContext(audioContext);
+    this.#audioContext = audioContext;
 
     this.setAnalyserData();
 
-    this.setCurrentTrack(track ?? tracks[0]);
+    this.#currentTrack = track ?? tracks[0];
 
-    const response = await fetch(this.getCurrentTrack()!.src);
+    const response = await fetch(this.#currentTrack!.src);
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    this.setAudioBuffer(audioBuffer);
-    this.setDuration(audioBuffer.duration);
+    this.#audioBuffer = audioBuffer;
+    this.#duration = audioBuffer.duration;
 
     const gainNode = audioContext.createGain();
-    gainNode.gain.value = this.getDefaultGainValue();
+    gainNode.gain.value = this.#defaultGainValue;
     const sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = audioBuffer;
 
-    sourceNode.connect(this.getAnalyser()!); // Connect source to analyser
-    this.getAnalyser()!.connect(gainNode); // Connect analyser to gain node
+    sourceNode.connect(this.#analyser!); // Connect source to analyser
+    this.#analyser!.connect(gainNode); // Connect analyser to gain node
     gainNode.connect(audioContext.destination); // Connect gain node to destination
 
     sourceNode.start();
@@ -211,116 +242,108 @@ export class MusicVisualizer {
       await audioContext.resume();
     }
 
-    this.setSourceNode(sourceNode);
-    this.setGainNode(gainNode);
+    this.#sourceNode = sourceNode;
+    this.#gainNode = gainNode;
 
     this.animate();
   };
 
   private setAnalyserData = () => {
-    const audioContext = this.getAudioContext();
-    if (!audioContext) {
+    if (!this.#audioContext) {
       return;
     }
 
-    let analyser = this.getAnalyser();
+    let analyser = this.#analyser;
     if (!analyser) {
-      analyser = audioContext.createAnalyser();
+      analyser = this.#audioContext.createAnalyser();
     }
     analyser.fftSize = getFftSize();
-    this.setAnalyser(analyser);
-    this.setBufferLength(analyser.frequencyBinCount);
-    this.setDataArray(new Uint8Array(analyser.frequencyBinCount));
+    this.#analyser = analyser;
+    this.#bufferLength = analyser.frequencyBinCount;
+    this.#dataArray = new Uint8Array(analyser.frequencyBinCount);
   };
 
   public playFromOffset = async (seconds: number) => {
-    if (!this.getAudioContext() || !this.getGainNode()) {
+    if (!this.#audioContext || !this.#gainNode) {
       return;
     }
 
-    let sourceNode = this.getSourceNode();
+    let sourceNode = this.#sourceNode;
     if (sourceNode) {
       sourceNode.stop(); // Stop any previous playback
     }
 
-    this.setOffset(seconds); // Set the current offset to the passed value
+    this.#offset = seconds; // Set the current offset to the passed value
 
-    sourceNode = this.getAudioContext()!.createBufferSource();
-    sourceNode.buffer = this.getAudioBuffer()!;
-    sourceNode.connect(this.getAnalyser()!);
-    this.getAnalyser()!.connect(this.getGainNode()!);
-    this.getGainNode()!.connect(this.getAudioContext()!.destination);
+    sourceNode = this.#audioContext.createBufferSource();
+    sourceNode.buffer = this.#audioBuffer!;
+    sourceNode.connect(this.#analyser!);
+    this.#analyser!.connect(this.#gainNode);
+    this.#gainNode.connect(this.#audioContext!.destination);
 
     // Start the audio from the specified offset
     sourceNode.start(0, seconds);
-    if (this.getAudioContext()!.state === "suspended") {
-      await this.getAudioContext()!.resume();
+    if (this.#audioContext.state === "suspended") {
+      await this.#audioContext.resume();
     }
-    this.setSourceNode(sourceNode);
-
-    this.setStartTime(this.getAudioContext()!.currentTime);
+    this.#sourceNode = sourceNode;
+    this.#startTime = this.#audioContext.currentTime;
   };
 
   public destroy = async () => {
-    const audioContext = this.getAudioContext();
-    if (!audioContext) {
+    if (!this.#audioContext) {
       return;
     }
 
-    this.getSourceNode()!.disconnect();
-    this.getGainNode()!.disconnect();
-    this.getAnalyser()!.disconnect();
-    await audioContext.close();
-    this.setAudioContext(undefined);
-
-    this.setAnalyser(undefined);
-    this.setBufferLength(undefined);
-    this.setDataArray(undefined);
-    this.setAudioBuffer(undefined);
-    this.setDuration(0);
-    this.setSourceNode(undefined);
-    this.setGainNode(undefined);
-    // don't change the default gain value
-    this.setDefaultGainValue(this.getDefaultGainValue());
-    this.setOffset(0);
-    this.setStartTime(0);
+    this.#sourceNode?.disconnect();
+    this.#gainNode?.disconnect();
+    this.#analyser?.disconnect();
+    await this.#audioContext.close();
+    this.#audioContext = undefined;
+    this.#analyser = undefined;
+    this.#bufferLength = undefined;
+    this.#dataArray = undefined;
+    this.#audioBuffer = undefined;
+    this.#duration = 0;
+    this.#sourceNode = undefined;
+    this.#gainNode = undefined;
+    this.#offset = 0;
+    this.#startTime = 0;
   };
 
   public isEnded = (): boolean => {
-    const audioContext = this.getAudioContext();
-    if (!audioContext) {
+    if (!this.#audioContext) {
       return false;
     }
-    return audioContext.currentTime - this.getStartTime() + this.getOffset() >= this.getDuration();
+    return this.#audioContext.currentTime - this.#startTime + this.#offset >= this.#duration;
   };
 
   public getPlaybackTime = (): number => {
-    const audioContext = this.getAudioContext();
-    if (!audioContext) {
+    if (!this.#audioContext) {
       return 0;
     }
     if (this.isEnded()) {
-      return this.getDuration();
+      return this.#duration;
     }
-    return audioContext.currentTime - this.getStartTime() + this.getOffset();
+    return this.#audioContext.currentTime - this.#startTime + this.#offset;
   };
 
   public changeTrack = async (trackIndex: number) => {
     await this.destroy();
-    this.setCurrentTrack(tracks[trackIndex]);
+    this.#currentTrack = tracks[trackIndex];
 
     // saving the original gain value so that if the default becomes 0
     // from muting, the previously set value is still known
-    const originalGainValue = this.getDefaultGainValue();
+    const originalGainValue = this.#defaultGainValue;
     if (document.querySelector(".secondary-controls-input")) {
-      this.setDefaultGainValue((document.querySelector(".secondary-controls-input") as HTMLInputElement).valueAsNumber);
+      this.#defaultGainValue = (document.querySelector(".secondary-controls-input") as HTMLInputElement).valueAsNumber;
     }
 
     await this.setupAudio(tracks[trackIndex]);
     // reset this known value
     // this means that the the user's previoously set volume can be restored
     // in the case that the .secondary-controls-input value is 0
-    this.setDefaultGainValue(originalGainValue);
+    this.#defaultGainValue = originalGainValue;
   };
 
   private handleResize = () => {

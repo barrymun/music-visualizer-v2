@@ -12,28 +12,28 @@ let isDragging: boolean = false;
 export const SecondaryControls = () => {
   const mv = App.getMusicVisualizer();
 
-  const sliderValue = van.state<number>(mv.getDefaultGainValue()); // default gainNode.gain.value is 1
+  const sliderValue = van.state<number>(mv.defaultGainValue); // default gainNode.gain.value is 1
   const isMuted = van.derive<boolean>(() => sliderValue.val === 0);
 
   const toggleMute = (_event: Event) => {
     if (sliderValue.val === 0) {
       // currently muted, want to unmute
-      let newValue = mv.getDefaultGainValue();
+      let newValue = mv.defaultGainValue;
       // check that the default gain value is not 0
       if (newValue === 0) newValue = 1;
 
-      if (mv.getGainNode()) {
-        mv.getGainNode()!.gain.value = newValue;
+      if (mv.gainNode) {
+        mv.gainNode.gain.value = newValue;
       }
 
       sliderValue.val = newValue;
     } else {
       // want to mute
       // save the current volume setting
-      mv.setDefaultGainValue(sliderValue.val);
+      mv.defaultGainValue = sliderValue.val;
 
-      if (mv.getGainNode()) {
-        mv.getGainNode()!.gain.value = 0;
+      if (mv.gainNode) {
+        mv.gainNode.gain.value = 0;
       }
 
       sliderValue.val = 0;
@@ -53,11 +53,12 @@ export const SecondaryControls = () => {
 
     // always set the default so if the user alters volume before
     // starting playback the selected volume will be used
-    mv.setDefaultGainValue(inputValue);
+    mv.defaultGainValue = inputValue;
 
-    if (!mv.getAudioContext()) return;
     sliderValue.val = inputValue;
-    mv.getGainNode()!.gain.value = inputValue;
+    if (mv.gainNode) {
+      mv.gainNode.gain.value = inputValue;
+    }
     isDragging = false;
   };
 

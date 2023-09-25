@@ -10,7 +10,7 @@ export const ArtistInfo = () => {
   const artistName = van.state<string>(noArtistName);
 
   setInterval(() => {
-    artistName.val = mv.getCurrentTrack()?.name ?? noArtistName;
+    artistName.val = mv.currentTrack?.name ?? noArtistName;
   }, 100);
 
   return div(

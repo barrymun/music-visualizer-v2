@@ -20,7 +20,7 @@ export const Player = () => {
       playbackStatus.val = "Play";
       return;
     }
-    playbackStatus.val = mv.getAudioContext()?.state === "running" ? "Pause" : "Play";
+    playbackStatus.val = mv.audioContext?.state === "running" ? "Pause" : "Play";
   }, 100);
 
   const handlePrevious = async () => {
@@ -29,17 +29,17 @@ export const Player = () => {
       return;
     }
 
-    const trackIndex = tracks.findIndex((track) => track.name === mv.getCurrentTrack()?.name);
+    const trackIndex = tracks.findIndex((track) => track.name === mv.currentTrack?.name);
     mv.changeTrack(trackIndex > 0 ? trackIndex - 1 : tracks.length - 1);
   };
 
   const handleNext = async () => {
-    const trackIndex = tracks.findIndex((track) => track.name === mv.getCurrentTrack()?.name);
+    const trackIndex = tracks.findIndex((track) => track.name === mv.currentTrack?.name);
     mv.changeTrack(trackIndex < tracks.length - 1 ? trackIndex + 1 : 0);
   };
 
   const togglePlayback = async () => {
-    const audioContext = mv.getAudioContext();
+    const audioContext = mv.audioContext;
 
     if (!audioContext) {
       await mv.setupAudio();
