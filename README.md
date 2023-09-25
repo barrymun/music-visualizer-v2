@@ -52,9 +52,13 @@ Visit `http://localhost:your-port-number` (the port will be displayed in the con
 
 Huge thanks to the creators of [VanJS](https://vanjs.org/).
 
-## 📢 Note for Mobile Users
+## Note for Mobile Users 📢
 
 If you are experiencing issues with audio not playing on mobile devices, please ensure your device is not set to silent mode or do not disturb mode. Some devices prevent audio playback in web applications when in these modes. Adjust your device settings and try again.
+
+## Hosting Information 🌐
+
+This project is hosted using Amazon Web Services (AWS). The assets are stored in an S3 bucket, and delivered globally via Amazon CloudFront.
 
 ## License
 
