@@ -4,3 +4,5 @@ export interface Track {
   name: string;
   src: string;
 }
+
+export type ChangeTrackCallback = () => number;

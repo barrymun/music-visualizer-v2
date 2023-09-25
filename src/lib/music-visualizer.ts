@@ -1,6 +1,6 @@
 import { tracks } from "utils/constants";
 import { delay, getFftSize } from "utils/helpers";
-import { Track } from "utils/types";
+import { ChangeTrackCallback, Track } from "utils/types";
 
 let requestId: number;
 
@@ -19,8 +19,10 @@ export class MusicVisualizer {
   #startTime = 0;
   #currentTrack?: Track;
   #defaultGainValue = 1;
+  #changeTrackCallback?: ChangeTrackCallback;
 
-  constructor() {
+  constructor(changeTrackCallback?: ChangeTrackCallback) {
+    this.#changeTrackCallback = changeTrackCallback;
     this.bindListeners();
     this.runSetup();
   }
@@ -334,16 +336,13 @@ export class MusicVisualizer {
 
     // saving the original gain value so that if the default becomes 0
     // from muting, the previously set value is still known
-    const originalGainValue = this.#defaultGainValue;
-    if (document.querySelector(".secondary-controls-input")) {
-      this.#defaultGainValue = (document.querySelector(".secondary-controls-input") as HTMLInputElement).valueAsNumber;
+    let gv = this.#defaultGainValue;
+    if (this.#changeTrackCallback) {
+      gv = this.#changeTrackCallback();
     }
 
+    this.#defaultGainValue = gv;
     await this.setupAudio(tracks[trackIndex]);
-    // reset this known value
-    // this means that the the user's previoously set volume can be restored
-    // in the case that the .secondary-controls-input value is 0
-    this.#defaultGainValue = originalGainValue;
   };
 
   private handleResize = () => {

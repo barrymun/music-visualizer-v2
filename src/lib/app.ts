@@ -6,7 +6,10 @@ export class App {
   public static getMusicVisualizer = (): MusicVisualizer => {
     // ensure singleton
     if (!this.musicVisualizer) {
-      this.musicVisualizer = new MusicVisualizer();
+      this.musicVisualizer = new MusicVisualizer(() => {
+        const input = document.querySelector(".secondary-controls-input") as HTMLInputElement | null;
+        return input ? input.valueAsNumber : 1;
+      });
     }
     return this.musicVisualizer;
   };
