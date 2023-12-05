@@ -1,7 +1,7 @@
 import van from "vanjs-core";
 
-import { App } from "lib/app";
 import { tracks } from "utils/constants";
+import { appState } from "utils/state";
 
 import playBtnSrc from "assets/img/play.svg";
 import pauseBtnSrc from "assets/img/pause.svg";
@@ -11,43 +11,41 @@ import nextBtnSrc from "assets/img/next.svg";
 const { button, div, img } = van.tags;
 
 export const Player = () => {
-  const mv = App.getMusicVisualizer();
-
   const playbackStatus = van.state<"Play" | "Pause">("Play");
 
   setInterval(() => {
-    if (mv.isEnded()) {
+    if (appState.mv.val.isEnded()) {
       playbackStatus.val = "Play";
       return;
     }
-    playbackStatus.val = mv.audioContext?.state === "running" ? "Pause" : "Play";
+    playbackStatus.val = appState.mv.val.audioContext?.state === "running" ? "Pause" : "Play";
   }, 100);
 
   const handlePrevious = async () => {
-    if (mv.getPlaybackTime() > 5) {
-      await mv.playFromOffset(0);
+    if (appState.mv.val.getPlaybackTime() > 5) {
+      await appState.mv.val.playFromOffset(0);
       return;
     }
 
-    const trackIndex = tracks.findIndex((track) => track.name === mv.currentTrack?.name);
-    mv.changeTrack(trackIndex > 0 ? trackIndex - 1 : tracks.length - 1);
+    const trackIndex = tracks.findIndex((track) => track.name === appState.mv.val.currentTrack?.name);
+    appState.mv.val.changeTrack(trackIndex > 0 ? trackIndex - 1 : tracks.length - 1);
   };
 
   const handleNext = async () => {
-    const trackIndex = tracks.findIndex((track) => track.name === mv.currentTrack?.name);
-    mv.changeTrack(trackIndex < tracks.length - 1 ? trackIndex + 1 : 0);
+    const trackIndex = tracks.findIndex((track) => track.name === appState.mv.val.currentTrack?.name);
+    appState.mv.val.changeTrack(trackIndex < tracks.length - 1 ? trackIndex + 1 : 0);
   };
 
   const togglePlayback = async () => {
-    const audioContext = mv.audioContext;
+    const audioContext = appState.mv.val.audioContext;
 
     if (!audioContext) {
-      await mv.setupAudio();
+      await appState.mv.val.setupAudio();
       return;
     }
 
-    if (mv.isEnded()) {
-      await mv.playFromOffset(0);
+    if (appState.mv.val.isEnded()) {
+      await appState.mv.val.playFromOffset(0);
       await audioContext.resume();
       return;
     }

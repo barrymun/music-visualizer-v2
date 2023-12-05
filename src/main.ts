@@ -1,11 +1,10 @@
 import van from "vanjs-core";
 
-import { App } from "lib/app";
-
 import { Controls } from "components/controls";
 import { SecondaryControls } from "components/secondary-controls";
 import { SongSelect } from "components/song-select";
 import { Visualizer } from "components/visualizer";
+import { appState } from "utils/state";
 
 import "assets/css/main.css";
 
@@ -20,15 +19,14 @@ const handleLoad = () => {
   const observer = new MutationObserver((mutationsList, _observer) => {
     for (const mutation of mutationsList) {
       if (mutation.type === "childList") {
-        const mv = App.getMusicVisualizer();
-        if (mv.visualizerCanvas) return;
+        if (appState.mv.val.visualizerCanvas) return;
 
         const canvas = document.getElementById("visualizer") as HTMLCanvasElement | null;
         if (!canvas) return;
 
-        mv.visualizerCanvas = canvas;
-        mv.visualizerCtx = canvas.getContext("2d")!;
-        mv.setCanvasSize();
+        appState.mv.val.visualizerCanvas = canvas;
+        appState.mv.val.visualizerCtx = canvas.getContext("2d")!;
+        appState.mv.val.setCanvasSize();
       }
     }
   });

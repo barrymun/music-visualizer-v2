@@ -1,37 +1,35 @@
 import van from "vanjs-core";
 import { isNaN } from "lodash";
 
-import { App } from "lib/app";
 import { tracks } from "utils/constants";
+import { appState } from "utils/state";
 import { Track } from "utils/types";
 
 const { div, option, select } = van.tags;
 
 export const SongSelect = () => {
-  const mv = App.getMusicVisualizer();
-
-  const currentTrack = van.state<Track | undefined>(mv.currentTrack);
+  const currentTrack = van.state<Track | undefined>(appState.mv.val.currentTrack);
 
   setInterval(() => {
-    currentTrack.val = mv.currentTrack;
+    currentTrack.val = appState.mv.val.currentTrack;
   }, 100);
 
   const handleChange = async (event: Event) => {
     const selectedValue = (event.target as HTMLSelectElement).value ?? 0;
     if (!selectedValue) {
-      await mv.destroy();
-      mv.currentTrack = undefined;
+      await appState.mv.val.destroy();
+      appState.mv.val.currentTrack = undefined;
       return;
     }
 
     const trackIndex: number = parseInt(selectedValue);
     if (isNaN(trackIndex) || trackIndex < 0 || trackIndex > tracks.length) {
-      await mv.destroy();
-      mv.currentTrack = undefined;
+      await appState.mv.val.destroy();
+      appState.mv.val.currentTrack = undefined;
       return;
     }
 
-    await mv.changeTrack(trackIndex);
+    await appState.mv.val.changeTrack(trackIndex);
   };
 
   return div(

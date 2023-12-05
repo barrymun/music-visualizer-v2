@@ -1,24 +1,22 @@
 import van from "vanjs-core";
 import { isNaN, isFinite } from "lodash";
 
-import { App } from "lib/app";
 import { secondsToMinSec } from "utils/helpers";
+import { appState } from "utils/state";
 
 const { div, input } = van.tags;
 
 let isDragging: boolean = false;
 
 export const SeekBar = () => {
-  const mv = App.getMusicVisualizer();
-
   const elapsedTime = van.state<string>("0:00");
   const duration = van.state<string>("0:00");
   const sliderValue = van.state<number>(0);
 
   setInterval(() => {
     if (isDragging) return;
-    const d = mv.duration;
-    const pt = mv.getPlaybackTime();
+    const d = appState.mv.val.duration;
+    const pt = appState.mv.val.getPlaybackTime();
     duration.val = secondsToMinSec(d);
     elapsedTime.val = secondsToMinSec(pt);
     const leftVal = (pt / d) * 100;
@@ -34,20 +32,20 @@ export const SeekBar = () => {
   };
 
   const handleMouseUp = async (event: Event) => {
-    if (!mv.audioContext) {
-      await mv.setupAudio();
+    if (!appState.mv.val.audioContext) {
+      await appState.mv.val.setupAudio();
       // don't start the player if the user slides the seek bar before pressing play
-      await mv.audioContext!.suspend();
+      await appState.mv.val.audioContext!.suspend();
     }
 
     const inputValue = (event.target as HTMLInputElement).valueAsNumber ?? 0;
 
-    const d = mv.duration;
+    const d = appState.mv.val.duration;
     const pt = (inputValue / 100) * d;
     duration.val = secondsToMinSec(d);
     elapsedTime.val = secondsToMinSec(pt);
     sliderValue.val = inputValue;
-    mv.playFromOffset(pt);
+    appState.mv.val.playFromOffset(pt);
     isDragging = false;
   };
 
