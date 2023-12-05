@@ -7,7 +7,7 @@ import { SecondaryControls } from "components/secondary-controls";
 import { SongSelect } from "components/song-select";
 import { Visualizer } from "components/visualizer";
 
-import "assets/style.css";
+import "assets/css/main.css";
 
 const dom = document.body as HTMLBodyElement;
 
