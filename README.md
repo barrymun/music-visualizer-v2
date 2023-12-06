@@ -63,3 +63,7 @@ This project is hosted using Amazon Web Services (AWS). The assets are stored in
 ## License
 
 This project is licensed under the MIT License. For detailed information, see the [LICENSE](./LICENSE) file in the root directory.
+
+## TODO
+
+- [ ] Fix: `Uncaught (in promise) DOMException: Failed to execute 'connect' on 'AudioNode': cannot connect to an AudioNode`. This seems to occur in `music-visualizer.ts:252` when rapidly clicking previous or next buttons. App functionality does not break.
