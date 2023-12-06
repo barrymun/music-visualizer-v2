@@ -1,8 +1,9 @@
 import { tracks } from "utils/constants";
 import { getFftSize } from "utils/helpers";
+import { appState } from "utils/state";
 import { ChangeTrackCallback, Track } from "utils/types";
 
-let requestId: number;
+let requestId: number | undefined;
 
 export class MusicVisualizer {
   #window: Window;
@@ -147,10 +148,17 @@ export class MusicVisualizer {
   }
 
   private animate = () => {
-    if (!this.visualizerCtx || !this.visualizerCanvas) return;
+    appState.mv.val = this;
+    requestId = requestAnimationFrame(this.animate);
+
+    if (!this.visualizerCtx || !this.visualizerCanvas) {
+      return;
+    }
 
     if (!this.audioContext) {
-      cancelAnimationFrame(requestId);
+      if (requestId) {
+        cancelAnimationFrame(requestId);
+      }
       this.visualizerCtx.clearRect(0, 0, this.visualizerCanvas.width, this.visualizerCanvas.height);
       return;
     }
@@ -158,11 +166,12 @@ export class MusicVisualizer {
     this.analyser!.getByteFrequencyData(this.dataArray!);
     this.visualizerCtx.clearRect(0, 0, this.visualizerCanvas.width, this.visualizerCanvas.height);
     this.draw();
-    requestId = requestAnimationFrame(this.animate);
   };
 
   private drawRoundedBar = (x: number, y: number, width: number, height: number) => {
-    if (!this.visualizerCtx) return;
+    if (!this.visualizerCtx) {
+      return;
+    }
 
     const radius = width / 2;
     this.visualizerCtx.beginPath();
@@ -173,7 +182,9 @@ export class MusicVisualizer {
   };
 
   private draw = () => {
-    if (!this.visualizerCtx || !this.visualizerCanvas) return;
+    if (!this.visualizerCtx || !this.visualizerCanvas) {
+      return;
+    }
 
     const barWidth: number = Math.round(this.visualizerCanvas.width / this.bufferLength! / 2);
     const pos: number = this.visualizerCanvas.width / 2;
@@ -203,7 +214,9 @@ export class MusicVisualizer {
   };
 
   public setCanvasSize = () => {
-    if (!this.visualizerCanvas) return;
+    if (!this.visualizerCanvas) {
+      return;
+    }
 
     this.visualizerCanvas.width = this.#window.innerWidth;
     this.visualizerCanvas.height = this.#window.innerHeight;
