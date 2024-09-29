@@ -29,5 +29,6 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "vanjs-core": "^1.2.1"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
